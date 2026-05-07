@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run *)",
+      "Bash(docker --version)",
+      "PowerShell(docker --version)",
+      "PowerShell(Test-NetConnection -ComputerName localhost -Port 5432 -WarningAction SilentlyContinue)",
+      "PowerShell(winget install -e --id Docker.DockerDesktop --accept-package-agreements --accept-source-agreements 2>&1)",
+      "PowerShell(winget install -e --id PostgreSQL.PostgreSQL.16 --accept-package-agreements --accept-source-agreements 2>&1)",
+      "Read(//c/Program Files/PostgreSQL/16/**)",
+      "PowerShell(Get-Process node -ErrorAction SilentlyContinue)",
+      "PowerShell(Stop-Process -Force)",
+      "Bash(git init *)",
+      "Bash(git remote *)"
+    ]
+  }
+}
