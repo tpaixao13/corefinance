@@ -87,6 +87,26 @@ export interface ResumoEmpresa {
   totalSaidas: number;
 }
 
+// ── Lançamentos ───────────────────────────────────────
+export type TipoLancamento = 'CREDITO' | 'DEBITO';
+export type StatusConciliacao = 'CONCILIADO' | 'PENDENTE' | 'NAO_ENCONTRADO';
+
+export interface Lancamento {
+  id: string;
+  empresaId: string;
+  contaId: string;
+  importacaoId: string;
+  idExterno: string | null;
+  data: string;
+  valor: string;
+  descricao: string | null;
+  tipo: TipoLancamento;
+  saldoExtrato: string | null;
+  statusConciliacao: StatusConciliacao;
+  conciliacaoId: string | null;
+  createdAt: string;
+}
+
 // ── Usuários ──────────────────────────────────────────
 export interface UsuarioItem {
   id: string;

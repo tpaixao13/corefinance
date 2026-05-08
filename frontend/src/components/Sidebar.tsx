@@ -6,6 +6,7 @@ import {
   Building2,
   Shield,
   Users,
+  TrendingDown,
   LogOut,
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
@@ -14,6 +15,7 @@ const navItems = [
   { to: '/', icon: LayoutDashboard, label: 'Dashboard', end: true },
   { to: '/contas', icon: Landmark, label: 'Contas' },
   { to: '/importar', icon: Upload, label: 'Importar Extrato' },
+  { to: '/despesas', icon: TrendingDown, label: 'Despesas' },
 ];
 
 export default function Sidebar() {
