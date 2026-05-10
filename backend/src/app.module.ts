@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ThrottlerModule } from '@nestjs/throttler';
 import { AuthModule } from './modules/auth/auth.module';
 import { EmpresasModule } from './modules/empresas/empresas.module';
 import { UsuariosModule } from './modules/usuarios/usuarios.module';
@@ -14,6 +15,10 @@ import { AuditoriaModule } from './modules/auditoria/auditoria.module';
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
 
+    // Rate limiting global: 300 req/min por IP (padrão geral)
+    // Login tem limite próprio mais restritivo via @Throttle no controller
+    ThrottlerModule.forRoot([{ ttl: 60_000, limit: 300 }]),
+
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -26,7 +31,8 @@ import { AuditoriaModule } from './modules/auditoria/auditoria.module';
         database: config.get('DB_NAME', 'tdgenfin'),
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
         migrations: [__dirname + '/database/migrations/*{.ts,.js}'],
-        synchronize: config.get('NODE_ENV') === 'development',
+        // synchronize NUNCA deve ser true em produção — destrói dados em alterações de schema
+        synchronize: config.get('NODE_ENV') !== 'production' && config.get('NODE_ENV') !== 'prod',
         logging: config.get('NODE_ENV') === 'development',
       }),
     }),
