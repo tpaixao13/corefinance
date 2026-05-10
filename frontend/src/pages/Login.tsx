@@ -25,7 +25,7 @@ export default function Login() {
       {/* ── Lado esquerdo — imagem ── */}
       <div className="hidden lg:flex lg:w-1/2 flex-col items-center justify-center p-12" style={{ backgroundColor: '#0B2A4A' }}>
         <img
-          src="/logo.png"
+          src="/logo.png?v=2"
           alt="TDGenFin"
           className="w-2/3 h-auto object-contain mb-12"
           style={{ filter: 'brightness(0) invert(1)' }}
@@ -45,7 +45,7 @@ export default function Login() {
           {/* Logo mobile (só aparece em telas menores) */}
           <div className="flex justify-center mb-8 lg:hidden">
             <img
-              src="/logo.png"
+              src="/logo.png?v=2"
               alt="TDGenFin"
               className="h-16 object-contain"
             />
