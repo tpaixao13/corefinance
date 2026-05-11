@@ -27,7 +27,8 @@ export default function Login() {
         <img
           src="/logo.png?v=4"
           alt="TDGenFin"
-          className="h-14 w-auto object-contain mb-12 brightness-0 invert"
+          className="w-auto object-contain mb-12 brightness-0 invert"
+          style={{ height: '106px' }}
         />
         <h2 className="text-3xl font-bold text-white leading-tight text-center">
           Gestão financeira<br />para negócios
@@ -46,7 +47,8 @@ export default function Login() {
             <img
               src="/logo.png?v=4"
               alt="TDGenFin"
-              className="h-16 object-contain"
+              className="object-contain"
+              style={{ height: '114px' }}
             />
           </div>
 
