@@ -30,7 +30,7 @@ export default function Login() {
           className="w-auto object-contain mb-12 brightness-0 invert"
           style={{ height: '106px' }}
         />
-        <h2 className="text-3xl font-bold text-white leading-tight text-center">
+        <h2 className="text-xl font-bold text-white leading-tight text-center">
           Sistema essencial de finanças
         </h2>
       </div>
