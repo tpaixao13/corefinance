@@ -1,7 +1,12 @@
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { contasApi } from '../api/contas';
 import { useAuth } from '../contexts/AuthContext';
-import { Landmark, RefreshCw } from 'lucide-react';
+import { usePermissoesCtx } from '../contexts/PermissoesContext';
+import AcessoNegado from '../components/AcessoNegado';
+import ContaBancariaForm from '../components/ContaBancariaForm';
+import { Landmark, RefreshCw, Plus, Pencil } from 'lucide-react';
+import type { ContaBancaria } from '../types';
 
 function formatCurrency(v: number) {
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);
@@ -9,12 +14,31 @@ function formatCurrency(v: number) {
 
 export default function Contas() {
   const { isAuthenticated } = useAuth();
+  const { temPermissao, isLoading: permLoading } = usePermissoesCtx();
+
+  if (!permLoading && !temPermissao('CONTA_BANCARIA_VIEW')) return <AcessoNegado />;
+
+  const [showForm, setShowForm] = useState(false);
+  const [editTarget, setEditTarget] = useState<ContaBancaria | undefined>();
 
   const { data: contas, isLoading, error, refetch } = useQuery({
     queryKey: ['contas'],
     queryFn: contasApi.listar,
     enabled: isAuthenticated,
   });
+
+  const canCreate = temPermissao('CONTA_BANCARIA_CREATE');
+  const canEdit = temPermissao('CONTA_BANCARIA_EDIT');
+
+  function handleEdit(conta: ContaBancaria) {
+    setEditTarget(conta);
+    setShowForm(true);
+  }
+
+  function handleCloseForm() {
+    setShowForm(false);
+    setEditTarget(undefined);
+  }
 
   if (isLoading)
     return (
@@ -34,13 +58,24 @@ export default function Contas() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-bold text-gray-800">Contas Bancárias</h2>
-        <button
-          onClick={() => refetch()}
-          className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800 font-medium"
-        >
-          <RefreshCw size={15} />
-          Atualizar
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => refetch()}
+            className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800 font-medium"
+          >
+            <RefreshCw size={15} />
+            Atualizar
+          </button>
+          {canCreate && (
+            <button
+              onClick={() => setShowForm(true)}
+              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2.5 rounded-lg transition-colors"
+            >
+              <Plus size={16} />
+              Nova Conta Bancária
+            </button>
+          )}
+        </div>
       </div>
 
       {!contas?.length ? (
@@ -66,15 +101,26 @@ export default function Contas() {
                     </p>
                   </div>
                 </div>
-                <span
-                  className={`text-xs px-2 py-0.5 rounded-full font-medium ${
-                    conta.ativo
-                      ? 'bg-green-100 text-green-700'
-                      : 'bg-gray-100 text-gray-500'
-                  }`}
-                >
-                  {conta.ativo ? 'Ativa' : 'Inativa'}
-                </span>
+                <div className="flex items-center gap-2">
+                  <span
+                    className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                      conta.ativo
+                        ? 'bg-green-100 text-green-700'
+                        : 'bg-gray-100 text-gray-500'
+                    }`}
+                  >
+                    {conta.ativo ? 'Ativa' : 'Inativa'}
+                  </span>
+                  {canEdit && (
+                    <button
+                      onClick={() => handleEdit(conta)}
+                      className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                      title="Editar conta"
+                    >
+                      <Pencil size={14} />
+                    </button>
+                  )}
+                </div>
               </div>
 
               {conta.descricao && (
@@ -102,6 +148,13 @@ export default function Contas() {
             </div>
           ))}
         </div>
+      )}
+
+      {showForm && (
+        <ContaBancariaForm
+          editTarget={editTarget}
+          onClose={handleCloseForm}
+        />
       )}
     </div>
   );

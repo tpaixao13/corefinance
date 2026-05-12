@@ -1,8 +1,9 @@
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException, ConflictException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
 import { ContaBancaria } from './conta-bancaria.entity';
 import { CreateContaBancariaDto } from './dto/create-conta-bancaria.dto';
+import { UpdateContaBancariaDto } from './dto/update-conta-bancaria.dto';
 import { AuditoriaService } from '../auditoria/auditoria.service';
 import { AcaoAuditoria } from '../auditoria/auditoria-log.entity';
 import { Role } from '../usuarios/usuario.entity';
@@ -16,10 +17,21 @@ export class ContasBancariasService {
     private readonly auditoriaService: AuditoriaService,
   ) {}
 
+  private async verificarDuplicata(empresaId: string, banco: string, agencia: string, numero: string, ignorarId?: string): Promise<void> {
+    const existente = await this.contaRepo.findOne({
+      where: { empresaId, banco, agencia, numero },
+    });
+    if (existente && existente.id !== ignorarId) {
+      throw new ConflictException('Já existe uma conta com este banco, agência e número para esta empresa');
+    }
+  }
+
   async criar(dto: CreateContaBancariaDto, usuarioId: string, usuarioRole: Role, usuarioEmpresaId: string): Promise<ContaBancaria> {
     if (usuarioRole !== Role.SUPER_ADMIN && dto.empresaId !== usuarioEmpresaId) {
       throw new ForbiddenException('Acesso negado a esta empresa');
     }
+
+    await this.verificarDuplicata(dto.empresaId, dto.banco, dto.agencia, dto.numero);
 
     const conta = this.contaRepo.create({
       ...dto,
@@ -34,6 +46,40 @@ export class ContasBancariasService {
       entidade: 'conta_bancaria',
       entidadeId: salva.id,
       dadosDepois: { banco: salva.banco, agencia: salva.agencia, numero: salva.numero, saldoInicial: salva.saldoInicial },
+    });
+
+    return salva;
+  }
+
+  async atualizar(id: string, dto: UpdateContaBancariaDto, usuarioId: string, empresaId?: string): Promise<ContaBancaria> {
+    const conta = await this.contaRepo.findOne({ where: { id } });
+    if (!conta) throw new NotFoundException('Conta bancária não encontrada');
+    if (empresaId && conta.empresaId !== empresaId) {
+      throw new NotFoundException('Conta bancária não encontrada');
+    }
+
+    if (dto.banco || dto.agencia || dto.numero) {
+      await this.verificarDuplicata(
+        conta.empresaId,
+        dto.banco ?? conta.banco,
+        dto.agencia ?? conta.agencia,
+        dto.numero ?? conta.numero,
+        id,
+      );
+    }
+
+    const dadosAntes = { banco: conta.banco, agencia: conta.agencia, numero: conta.numero, descricao: conta.descricao, ativo: conta.ativo };
+    Object.assign(conta, dto);
+    const salva = await this.contaRepo.save(conta);
+
+    await this.auditoriaService.registrar({
+      usuarioId,
+      empresaId: salva.empresaId,
+      acao: AcaoAuditoria.ATUALIZACAO_CONTA,
+      entidade: 'conta_bancaria',
+      entidadeId: salva.id,
+      dadosAntes,
+      dadosDepois: { banco: salva.banco, agencia: salva.agencia, numero: salva.numero, descricao: salva.descricao, ativo: salva.ativo },
     });
 
     return salva;

@@ -101,6 +101,23 @@ export interface ContaBancaria {
   ativo: boolean;
 }
 
+export interface CreateContaBancariaPayload {
+  empresaId: string;
+  banco: string;
+  agencia: string;
+  numero: string;
+  descricao?: string;
+  saldoInicial?: number;
+}
+
+export interface UpdateContaBancariaPayload {
+  banco?: string;
+  agencia?: string;
+  numero?: string;
+  descricao?: string;
+  ativo?: boolean;
+}
+
 // ── Extrato ───────────────────────────────────────────
 export type FormatoExtrato = 'OFX' | 'CSV' | 'XLSX';
 

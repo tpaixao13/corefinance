@@ -19,6 +19,9 @@ export enum ChavePermissao {
   CONTAS_RECEBER_VIEW = 'CONTAS_RECEBER_VIEW',
   CONTAS_RECEBER_EDIT = 'CONTAS_RECEBER_EDIT',
   AUDITORIA_VIEW = 'AUDITORIA_VIEW',
+  CONTA_BANCARIA_VIEW = 'CONTA_BANCARIA_VIEW',
+  CONTA_BANCARIA_CREATE = 'CONTA_BANCARIA_CREATE',
+  CONTA_BANCARIA_EDIT = 'CONTA_BANCARIA_EDIT',
 }
 
 export const PERMISSOES_DESCRICOES: Record<ChavePermissao, string> = {
@@ -30,6 +33,9 @@ export const PERMISSOES_DESCRICOES: Record<ChavePermissao, string> = {
   [ChavePermissao.CONTAS_RECEBER_VIEW]: 'Ver Contas a Receber',
   [ChavePermissao.CONTAS_RECEBER_EDIT]: 'Editar Contas a Receber',
   [ChavePermissao.AUDITORIA_VIEW]: 'Ver Auditoria',
+  [ChavePermissao.CONTA_BANCARIA_VIEW]: 'Ver Contas Bancárias',
+  [ChavePermissao.CONTA_BANCARIA_CREATE]: 'Criar Conta Bancária',
+  [ChavePermissao.CONTA_BANCARIA_EDIT]: 'Editar Conta Bancária',
 };
 
 export const PERMISSOES_GRUPOS: { label: string; chaves: ChavePermissao[] }[] = [
@@ -44,6 +50,10 @@ export const PERMISSOES_GRUPOS: { label: string; chaves: ChavePermissao[] }[] = 
   {
     label: 'Conciliação',
     chaves: [ChavePermissao.CONCILIACAO_EXECUTAR],
+  },
+  {
+    label: 'Contas Bancárias',
+    chaves: [ChavePermissao.CONTA_BANCARIA_VIEW, ChavePermissao.CONTA_BANCARIA_CREATE, ChavePermissao.CONTA_BANCARIA_EDIT],
   },
   {
     label: 'Contas a Pagar',
