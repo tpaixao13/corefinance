@@ -1,4 +1,5 @@
-import { IsOptional, IsString, IsEnum, IsDateString, MaxLength } from 'class-validator';
+import { IsOptional, IsString, IsEnum, IsDateString, IsNumber, MaxLength, Min } from 'class-validator';
+import { Type } from 'class-transformer';
 import { StatusContaReceber } from '../conta-receber.entity';
 import { RecorrenciaContaPagar } from '../../contas-pagar/conta-pagar.entity';
 
@@ -12,6 +13,12 @@ export class UpdateContaReceberDto {
   @IsString()
   @MaxLength(200)
   cliente?: string;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber({ maxDecimalPlaces: 2 })
+  @Min(0.01)
+  valor?: number;
 
   @IsOptional()
   @IsDateString()
