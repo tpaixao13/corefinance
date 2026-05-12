@@ -12,6 +12,7 @@ import { DashboardModule } from './modules/dashboard/dashboard.module';
 import { AuditoriaModule } from './modules/auditoria/auditoria.module';
 import { ContasPagarModule } from './modules/contas-pagar/contas-pagar.module';
 import { ContasReceberModule } from './modules/contas-receber/contas-receber.module';
+import { EnderecosModule } from './modules/enderecos/enderecos.module';
 
 @Module({
   imports: [
@@ -49,6 +50,7 @@ import { ContasReceberModule } from './modules/contas-receber/contas-receber.mod
     AuditoriaModule,
     ContasPagarModule,
     ContasReceberModule,
+    EnderecosModule,
   ],
 })
 export class AppModule {}
