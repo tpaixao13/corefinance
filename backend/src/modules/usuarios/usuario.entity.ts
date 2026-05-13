@@ -42,7 +42,7 @@ export class Usuario {
   @Column({ default: true })
   ativo: boolean;
 
-  @Column({ name: 'reset_token_hash', length: 64, nullable: true })
+  @Column({ name: 'reset_token_hash', type: 'varchar', length: 64, nullable: true })
   resetTokenHash: string | null;
 
   @Column({ name: 'reset_token_expires_at', type: 'timestamp', nullable: true })
