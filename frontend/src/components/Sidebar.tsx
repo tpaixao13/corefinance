@@ -12,6 +12,8 @@ import {
   Receipt,
   ShieldCheck,
   BarChart2,
+  FileText,
+  Download,
   LogOut,
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
@@ -72,8 +74,16 @@ export default function Sidebar() {
           <NavLink to="/permissoes" className={navCls}><ShieldCheck size={18} />Permissões</NavLink>
         )}
 
+        <NavLink to="/dre" className={navCls}><TrendingUp size={18} />DRE</NavLink>
+
+        <NavLink to="/relatorio-financeiro" className={navCls}><FileText size={18} />Rel. Financeiro</NavLink>
+
+        {(user?.role === 'SUPER_ADMIN' || user?.role === 'ADMIN_EMPRESA') && (
+          <NavLink to="/exportacao" className={navCls}><Download size={18} />Exportação</NavLink>
+        )}
+
         {user?.role === 'SUPER_ADMIN' && (
-          <NavLink to="/relatorios" className={navCls}><BarChart2 size={18} />Relatórios</NavLink>
+          <NavLink to="/relatorios" className={navCls}><BarChart2 size={18} />Permissões (Rel.)</NavLink>
         )}
 
         {user?.role === 'SUPER_ADMIN' && (

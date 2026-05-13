@@ -16,6 +16,9 @@ import ContasPagar from '../pages/ContasPagar';
 import ContasReceber from '../pages/ContasReceber';
 import Permissoes from '../pages/Permissoes';
 import Relatorios from '../pages/Relatorios';
+import Dre from '../pages/Dre';
+import RelatorioFinanceiro from '../pages/RelatorioFinanceiro';
+import Exportacao from '../pages/Exportacao';
 import EsqueciSenha from '../pages/EsqueciSenha';
 import ResetSenha from '../pages/ResetSenha';
 
@@ -58,6 +61,9 @@ export default function AppRoutes() {
             <Route path="/contas-receber" element={<ContasReceber />} />
             <Route path="/permissoes" element={<Permissoes />} />
             <Route path="/relatorios" element={<Relatorios />} />
+            <Route path="/dre" element={<Dre />} />
+            <Route path="/relatorio-financeiro" element={<RelatorioFinanceiro />} />
+            <Route path="/exportacao" element={<Exportacao />} />
           </Route>
         </Route>
 
