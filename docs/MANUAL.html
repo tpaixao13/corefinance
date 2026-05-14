@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CoreFinance — Manual do Usuário</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 15px; line-height: 1.65; color: #1e293b; background: #f8fafc; }
+  a { color: #2563eb; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* Layout */
+  .wrapper { display: flex; min-height: 100vh; }
+  nav { width: 280px; min-width: 280px; background: #0B2A4A; color: #cbd5e1; position: sticky; top: 0; height: 100vh; overflow-y: auto; padding: 24px 0; flex-shrink: 0; }
+  main { flex: 1; padding: 48px 56px; max-width: 960px; }
+
+  /* Nav */
+  .nav-logo { color: #fff; font-size: 18px; font-weight: 700; padding: 0 24px 20px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+  .nav-logo span { font-size: 22px; }
+  nav ul { list-style: none; }
+  nav ul li a { display: block; padding: 7px 24px; font-size: 13.5px; color: #94a3b8; transition: all .15s; border-left: 3px solid transparent; }
+  nav ul li a:hover { color: #fff; background: rgba(255,255,255,0.06); border-left-color: #3b82f6; text-decoration: none; }
+  nav ul li a.active { color: #fff; border-left-color: #3b82f6; background: rgba(59,130,246,0.12); }
+  .nav-section { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: #475569; padding: 18px 24px 6px; }
+
+  /* Typography */
+  h1 { font-size: 32px; font-weight: 800; color: #0f172a; margin-bottom: 8px; }
+  h2 { font-size: 22px; font-weight: 700; color: #0f172a; margin: 48px 0 16px; padding-bottom: 10px; border-bottom: 2px solid #e2e8f0; display: flex; align-items: center; gap: 10px; }
+  h2 .num { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; background: #0B2A4A; color: #fff; border-radius: 6px; font-size: 13px; font-weight: 700; flex-shrink: 0; }
+  h3 { font-size: 15px; font-weight: 700; color: #334155; margin: 24px 0 10px; }
+  p { margin-bottom: 12px; color: #334155; }
+  .lead { font-size: 16px; color: #64748b; margin-bottom: 24px; }
+
+  /* Tables */
+  .table-wrap { overflow-x: auto; margin: 14px 0 20px; border-radius: 10px; border: 1px solid #e2e8f0; }
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  thead { background: #f1f5f9; }
+  th { text-align: left; padding: 10px 14px; font-weight: 600; color: #475569; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; border-bottom: 1px solid #e2e8f0; }
+  td { padding: 10px 14px; border-bottom: 1px solid #f1f5f9; color: #334155; vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #fafafa; }
+  code { background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 4px; padding: 1px 6px; font-size: 12.5px; font-family: 'SF Mono', 'Fira Code', monospace; color: #0f172a; }
+
+  /* Badges */
+  .badge { display: inline-block; padding: 2px 9px; border-radius: 99px; font-size: 11.5px; font-weight: 600; }
+  .badge-blue { background: #dbeafe; color: #1d4ed8; }
+  .badge-purple { background: #ede9fe; color: #6d28d9; }
+  .badge-gray { background: #f1f5f9; color: #475569; }
+  .badge-green { background: #dcfce7; color: #15803d; }
+  .badge-yellow { background: #fef9c3; color: #a16207; }
+  .badge-red { background: #fee2e2; color: #b91c1c; }
+  .badge-orange { background: #ffedd5; color: #c2410c; }
+
+  /* Callouts */
+  .callout { border-radius: 10px; padding: 14px 18px; margin: 16px 0; font-size: 13.5px; line-height: 1.6; display: flex; gap: 12px; align-items: flex-start; }
+  .callout-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+  .callout-info { background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; }
+  .callout-warn { background: #fffbeb; border: 1px solid #fde68a; color: #92400e; }
+  .callout-danger { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; }
+  .callout-success { background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; }
+  .callout p { margin: 0; color: inherit; }
+
+  /* Screen header (decorative) */
+  .screen-header { background: #0B2A4A; color: #fff; border-radius: 10px 10px 0 0; padding: 12px 20px; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px; margin-top: 20px; }
+  .screen-header .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot-red { background: #ef4444; }
+  .dot-yellow { background: #eab308; }
+  .dot-green { background: #22c55e; }
+  .screen-body { background: #fff; border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 10px 10px; padding: 20px; margin-bottom: 24px; }
+
+  /* Role pill */
+  .role-super { background: #ede9fe; color: #6d28d9; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 99px; }
+  .role-admin { background: #dbeafe; color: #1d4ed8; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 99px; }
+  .role-user { background: #f1f5f9; color: #475569; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 99px; }
+
+  /* Permission grid */
+  .perm-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 8px; margin: 12px 0; }
+  .perm-item { display: flex; align-items: center; gap: 7px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 7px; padding: 7px 10px; font-size: 12px; color: #166534; font-family: monospace; }
+  .perm-item.off { background: #f8fafc; border-color: #e2e8f0; color: #94a3b8; }
+
+  /* Hero */
+  .hero { background: linear-gradient(135deg, #0B2A4A 0%, #1e4976 100%); border-radius: 14px; padding: 36px 40px; margin-bottom: 40px; color: #fff; }
+  .hero h1 { color: #fff; font-size: 28px; margin-bottom: 6px; }
+  .hero .lead { color: #93c5fd; margin-bottom: 0; }
+  .hero-meta { margin-top: 20px; display: flex; gap: 16px; flex-wrap: wrap; }
+  .hero-meta span { font-size: 12px; color: #93c5fd; background: rgba(255,255,255,0.1); border-radius: 6px; padding: 4px 10px; }
+
+  /* Print */
+  @media print {
+    nav { display: none; }
+    main { padding: 20px; max-width: 100%; }
+    body { background: #fff; }
+    h2 { page-break-before: always; }
+    h2:first-of-type { page-break-before: avoid; }
+  }
+
+  /* Scrollbar nav */
+  nav::-webkit-scrollbar { width: 4px; }
+  nav::-webkit-scrollbar-track { background: transparent; }
+  nav::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 2px; }
+
+  /* Divider */
+  hr { border: none; border-top: 1px solid #e2e8f0; margin: 32px 0; }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+<!-- Sidebar -->
+<nav>
+  <div class="nav-logo"><span>💼</span> CoreFinance</div>
+  <div class="nav-section">Geral</div>
+  <ul>
+    <li><a href="#perfis">1. Perfis de Acesso</a></li>
+    <li><a href="#login">2. Login</a></li>
+    <li><a href="#esqueci">3. Esqueci a Senha</a></li>
+    <li><a href="#navegacao">4. Navegação</a></li>
+  </ul>
+  <div class="nav-section">Financeiro</div>
+  <ul>
+    <li><a href="#dashboard">5. Dashboard</a></li>
+    <li><a href="#contas">6. Contas Bancárias</a></li>
+    <li><a href="#importar">7. Importar Extrato</a></li>
+    <li><a href="#despesas">8. Despesas</a></li>
+    <li><a href="#pagar">9. Contas a Pagar</a></li>
+    <li><a href="#receber">10. Contas a Receber</a></li>
+    <li><a href="#conciliacao">11. Conciliação</a></li>
+    <li><a href="#dre">12. DRE</a></li>
+    <li><a href="#relatorio">13. Relatório Financeiro</a></li>
+    <li><a href="#exportacao">14. Exportação</a></li>
+  </ul>
+  <div class="nav-section">Administração</div>
+  <ul>
+    <li><a href="#usuarios">15. Usuários</a></li>
+    <li><a href="#permissoes">16. Permissões</a></li>
+    <li><a href="#rel-permissoes">17. Rel. Permissões</a></li>
+    <li><a href="#auditoria">18. Auditoria</a></li>
+    <li><a href="#empresas">19. Empresas</a></li>
+    <li><a href="#empresa-view">20. Ver Empresa</a></li>
+    <li><a href="#empresa-form">21. Cad. Empresa</a></li>
+  </ul>
+</nav>
+
+<!-- Main -->
+<main>
+
+<div class="hero">
+  <h1>CoreFinance — Manual do Usuário</h1>
+  <p class="lead">Guia completo de todas as telas, campos e botões do sistema.</p>
+  <div class="hero-meta">
+    <span>Versão 2026-05-13</span>
+    <span>20 telas documentadas</span>
+    <span>3 perfis de acesso</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 id="perfis"><span class="num">1</span> Perfis de Acesso</h2>
+
+<p>O sistema possui três níveis de acesso. O que cada usuário vê e pode fazer depende do seu perfil.</p>
+
+<div class="table-wrap"><table>
+  <thead><tr><th>Perfil</th><th>Badge</th><th>Descrição</th></tr></thead>
+  <tbody>
+    <tr><td><strong>SUPER_ADMIN</strong></td><td><span class="role-super">SUPER_ADMIN</span></td><td>Acesso total ao sistema. Gerencia todas as empresas, define limites de licença e tem visibilidade global. Não possui restrições de permissão.</td></tr>
+    <tr><td><strong>ADMIN_EMPRESA</strong></td><td><span class="role-admin">ADMIN_EMPRESA</span></td><td>Administrador de uma empresa específica. Permissões configuráveis individualmente pelo SUPER_ADMIN. Por padrão já vem com Dashboard e Contas Bancárias habilitados.</td></tr>
+    <tr><td><strong>USUARIO</strong></td><td><span class="role-user">USUARIO</span></td><td>Acesso somente leitura. Não pode criar nem editar registros. Permissões também configuráveis.</td></tr>
+  </tbody>
+</table></div>
+
+<div class="callout callout-info"><span class="callout-icon">ℹ️</span><p>SUPER_ADMIN não está vinculado a nenhuma empresa — ele seleciona a empresa no cabeçalho para visualizar dados específicos. ADMIN_EMPRESA e USUARIO só enxergam dados da sua própria empresa.</p></div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 id="login"><span class="num">2</span> Login</h2>
+<p class="lead">Rota: <code>/login</code></p>
+
+<p>Tela de acesso ao sistema. Dividida em dois painéis: logo à esquerda (fundo azul escuro <code>#0B2A4A</code>) e formulário à direita (fundo cinza claro).</p>
+
+<div class="screen-header"><span class="dot dot-red"></span><span class="dot dot-yellow"></span><span class="dot dot-green"></span>&nbsp; CoreFinance — Login</div>
+<div class="screen-body">
+  <h3>Campos do formulário</h3>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Campo</th><th>Tipo</th><th>Descrição</th></tr></thead>
+    <tbody>
+      <tr><td><strong>E-mail</strong></td><td>email</td><td>Endereço de e-mail cadastrado no sistema. Obrigatório.</td></tr>
+      <tr><td><strong>Senha</strong></td><td>password</td><td>Senha do usuário (exibida com pontos). Obrigatório.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Botões</h3>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Botão</th><th>Ação</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Entrar</strong></td><td>Valida as credenciais. Se corretas, redireciona para o Dashboard. Fica desabilitado (opaco) durante o carregamento. Exibe texto "Entrando..." enquanto processa.</td></tr>
+      <tr><td><strong>Esqueceu a senha?</strong></td><td>Link que redireciona para <code>/esqueci-senha</code>.</td></tr>
+    </tbody>
+  </table></div>
+</div>
+
+<div class="callout callout-warn"><span class="callout-icon">⚠️</span><p><strong>Segurança:</strong> O sistema limita a 5 tentativas de login por minuto por IP. Após exceder, novas tentativas são bloqueadas temporariamente com mensagem de erro.</p></div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 id="esqueci"><span class="num">3</span> Esqueci minha Senha</h2>
+<p class="lead">Rota: <code>/esqueci-senha</code></p>
+
+<p>Permite solicitar o envio de um link de redefinição de senha para o e-mail cadastrado.</p>
+
+<div class="table-wrap"><table>
+  <thead><tr><th>Botão</th><th>Ação</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Enviar link de redefinição</strong></td><td>Envia um e-mail com link temporário. Após o envio, uma confirmação aparece na tela.</td></tr>
+    <tr><td><strong>Voltar para o login</strong></td><td>Retorna para <code>/login</code> sem realizar nenhuma ação.</td></tr>
+  </tbody>
+</table></div>
+
+<p>O link recebido por e-mail leva à rota <code>/reset-senha</code>, onde a nova senha deve ser digitada e confirmada.</p>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 id="navegacao"><span class="num">4</span> Navegação — Barra Lateral e Cabeçalho</h2>
+
+<h3>Barra Lateral (Sidebar)</h3>
+<p>Sempre visível no lado esquerdo. Itens visíveis dependem do perfil e das permissões.</p>
+
+<div class="table-wrap"><table>
+  <thead><tr><th>Item do menu</th><th>Quem vê</th><th>Permissão</th></tr></thead>
+  <tbody>
+    <tr><td>Dashboard</td><td>Todos</td><td><code>DASHBOARD_VIEW</code></td></tr>
+    <tr><td>Contas Bancárias</td><td>Todos</td><td><code>CONTA_BANCARIA_VIEW</code></td></tr>
+    <tr><td>Importar Extrato</td><td>Todos</td><td><code>EXTRATO_IMPORT</code></td></tr>
+    <tr><td>Despesas</td><td>Todos</td><td>—</td></tr>
+    <tr><td>Contas a Pagar</td><td>Todos</td><td><code>CONTAS_PAGAR_VIEW</code></td></tr>
+    <tr><td>Contas a Receber</td><td>Todos</td><td><code>CONTAS_RECEBER_VIEW</code></td></tr>
+    <tr><td>Conciliação</td><td>SUPER_ADMIN e ADMIN_EMPRESA</td><td><code>CONCILIACAO_EXECUTAR</code></td></tr>
+    <tr><td>Usuários</td><td>SUPER_ADMIN e ADMIN_EMPRESA</td><td>—</td></tr>
+    <tr><td>Permissões</td><td>SUPER_ADMIN e ADMIN_EMPRESA</td><td>—</td></tr>
+    <tr><td>Relatório de Permissões</td><td>SUPER_ADMIN e ADMIN_EMPRESA</td><td>—</td></tr>
+    <tr><td>Auditoria</td><td>SUPER_ADMIN e ADMIN_EMPRESA</td><td><code>AUDITORIA_VIEW</code></td></tr>
+    <tr><td>DRE</td><td>SUPER_ADMIN e ADMIN_EMPRESA</td><td>—</td></tr>
+    <tr><td>Relatório Financeiro</td><td>SUPER_ADMIN e ADMIN_EMPRESA</td><td>—</td></tr>
+    <tr><td>Exportação</td><td>SUPER_ADMIN e ADMIN_EMPRESA</td><td>—</td></tr>
+    <tr><td>Empresas</td><td>SUPER_ADMIN apenas</td><td>—</td></tr>
+  </tbody>
+</table></div>
+
+<h3>Cabeçalho (Header)</h3>
+<div class="table-wrap"><table>
+  <thead><tr><th>Elemento</th><th>Descrição</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Seletor de empresa</strong> <span class="role-super">SUPER_ADMIN</span></td><td>Dropdown com todas as empresas. SUPER_ADMIN deve selecionar para ver dados. A seleção é lembrada pelo navegador (localStorage).</td></tr>
+    <tr><td><strong>Nome do usuário / Sair</strong></td><td>Exibe o nome do usuário logado. Botão <strong>Sair</strong> encerra a sessão e redireciona ao login.</td></tr>
+  </tbody>
+</table></div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 id="dashboard"><span class="num">5</span> Dashboard Financeiro</h2>
+<p class="lead">Rota: <code>/</code> &nbsp;|&nbsp; Permissão: <code>DASHBOARD_VIEW</code></p>
+
+<p>Visão consolidada da situação financeira da empresa no período selecionado.</p>
+
+<h3>Filtro de Período</h3>
+<div class="table-wrap"><table>
+  <thead><tr><th>Elemento</th><th>Descrição</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Campo "De"</strong></td><td>Data de início. Padrão: primeiro dia do mês atual. Ao alterar, os dados recarregam automaticamente.</td></tr>
+    <tr><td><strong>Campo "Até"</strong></td><td>Data de fim. Padrão: hoje.</td></tr>
+  </tbody>
+</table></div>
+
+<h3>Cards de Resumo Consolidado</h3>
+<div class="table-wrap"><table>
+  <thead><tr><th>Card</th><th>O que mostra</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Contas Ativas</strong></td><td>Total de contas bancárias ativas da empresa.</td></tr>
+    <tr><td><strong>Saldo Consolidado</strong></td><td>Soma dos saldos de todas as contas. Azul se positivo, vermelho se negativo.</td></tr>
+    <tr><td><strong>Total Entradas</strong></td><td>Soma de créditos conciliados no período (verde).</td></tr>
+    <tr><td><strong>Total Saídas</strong></td><td>Soma de débitos conciliados no período (vermelho).</td></tr>
+  </tbody>
+</table></div>
+
+<h3>Painel por Conta</h3>
+<p><strong>Lista de contas (esquerda):</strong> cada conta mostra banco, agência, número e saldo atual. Clique para selecionar e ver detalhes à direita.</p>
+
+<p><strong>Detalhes da conta (direita):</strong></p>
+<div class="table-wrap"><table>
+  <thead><tr><th>Card</th><th>Descrição</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Saldo Inicial</strong></td><td>Saldo de abertura configurado no cadastro da conta.</td></tr>
+    <tr><td><strong>Total Entradas</strong></td><td>Créditos no período filtrado.</td></tr>
+    <tr><td><strong>Total Saídas</strong></td><td>Débitos no período filtrado.</td></tr>
+    <tr><td><strong>Saldo Atual</strong></td><td>Saldo atual calculado. Badge amarelo indica lançamentos pendentes.</td></tr>
+  </tbody>
+</table></div>
+
+<h3>Status de Conciliação</h3>
+<div class="table-wrap"><table>
+  <thead><tr><th>Indicador</th><th>Cor</th><th>Significado</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Conciliados</strong></td><td><span class="badge badge-green">Verde</span></td><td>Lançamentos do extrato vinculados a registros do sistema.</td></tr>
+    <tr><td><strong>Pendentes</strong></td><td><span class="badge badge-yellow">Amarelo</span></td><td>Lançamentos importados ainda aguardando conciliação.</td></tr>
+    <tr><td><strong>Não encontrados</strong></td><td><span class="badge badge-red">Vermelho</span></td><td>Lançamentos do extrato sem correspondência no sistema.</td></tr>
+  </tbody>
+</table></div>
+
+<div class="callout callout-warn"><span class="callout-icon">⚠️</span><p>Se houver diferença entre o saldo calculado e o saldo do extrato, um <strong>alerta laranja</strong> aparece automaticamente informando o valor da divergência.</p></div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 id="contas"><span class="num">6</span> Contas Bancárias</h2>
+<p class="lead">Rota: <code>/contas</code> &nbsp;|&nbsp; Permissão: <code>CONTA_BANCARIA_VIEW</code></p>
+
+<h3>Botões do Cabeçalho</h3>
+<div class="table-wrap"><table>
+  <thead><tr><th>Botão</th><th>Permissão</th><th>Ação</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Atualizar</strong></td><td>Todos</td><td>Recarrega a lista de contas do servidor.</td></tr>
+    <tr><td><strong>Nova Conta Bancária</strong></td><td><code>CONTA_BANCARIA_CREATE</code></td><td>Abre o modal de cadastro de nova conta.</td></tr>
+  </tbody>
+</table></div>
+
+<h3>Botões no Card de Cada Conta</h3>
+<div class="table-wrap"><table>
+  <thead><tr><th>Botão</th><th>Ícone</th><th>Permissão</th><th>Ação</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Editar</strong></td><td>Lápis ✏️</td><td><code>CONTA_BANCARIA_EDIT</code></td><td>Abre o modal de edição da conta.</td></tr>
+    <tr><td><strong>Inativar</strong></td><td>PowerOff ⏻</td><td><code>CONTA_BANCARIA_EDIT</code></td><td>Inativa a conta (apenas em contas ativas). Fundo muda para amarelo claro.</td></tr>
+    <tr><td><strong>Ativar</strong></td><td>Power ⏼</td><td><code>CONTA_BANCARIA_EDIT</code></td><td>Reativa a conta (apenas em contas inativas).</td></tr>
+  </tbody>
+</table></div>
+
+<h3>Formulário de Conta (Modal)</h3>
+<div class="table-wrap"><table>
+  <thead><tr><th>Campo</th><th>Obrigatório</th><th>Descrição</th></tr></thead>
+  <tbody>
+    <tr><td>Banco</td><td>Sim</td><td>Nome do banco (ex: Itaú, Bradesco).</td></tr>
+    <tr><td>Agência</td><td>Sim</td><td>Número da agência.</td></tr>
+    <tr><td>Número da conta</td><td>Sim</td><td>Número da conta corrente.</td></tr>
+    <tr><td>Descrição</td><td>Não</td><td>Apelido ou observação para identificar a conta.</td></tr>
+    <tr><td>Saldo Inicial</td><td>Não</td><td>Saldo de abertura (R$ 0,00 padrão). Disponível apenas no cadastro.</td></tr>
+  </tbody>
+</table></div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 id="importar"><span class="num">7</span> Importar Extrato</h2>
+<p class="lead">Rota: <code>/importar</code> &nbsp;|&nbsp; Permissão: <code>EXTRATO_IMPORT</code></p>
+
+<div class="table-wrap"><table>
+  <thead><tr><th>Campo</th><th>Obrigatório</th><th>Descrição</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Conta Bancária</strong></td><td>Sim</td><td>Dropdown com todas as contas ativas da empresa.</td></tr>
+    <tr><td><strong>Arquivo</strong></td><td>Sim</td><td>Área de upload com drag-and-drop. Aceita OFX, CSV e XLSX (máx. 10 MB).</td></tr>
+  </tbody>
+</table></div>
+
+<h3>Área de upload</h3>
+<p>Arraste o arquivo para a área pontilhada ou clique para abrir o seletor. Após selecionar, o nome do arquivo aparece em verde. O botão <strong>✕</strong> remove o arquivo para escolher outro.</p>
+
+<h3>Formatos suportados</h3>
+<div class="table-wrap"><table>
+  <thead><tr><th>Formato</th><th>Extensão</th></tr></thead>
+  <tbody>
+    <tr><td>OFX — Open Financial Exchange</td><td><code>.ofx</code>, <code>.qfx</code></td></tr>
+    <tr><td>CSV</td><td><code>.csv</code></td></tr>
+    <tr><td>Excel</td><td><code>.xlsx</code>, <code>.xls</code></td></tr>
+  </tbody>
+</table></div>
+
+<div class="table-wrap"><table>
+  <thead><tr><th>Botão</th><th>Ação</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Importar Extrato</strong></td><td>Envia o arquivo. Fica desabilitado se conta ou arquivo não estiverem selecionados. Exibe "Importando..." durante o processamento.</td></tr>
+  </tbody>
+</table></div>
+
+<div class="callout callout-success"><span class="callout-icon">✅</span><p>O sistema detecta automaticamente duplicatas usando hash SHA-256. O mesmo arquivo não pode ser importado duas vezes.</p></div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 id="despesas"><span class="num">8</span> Despesas</h2>
+<p class="lead">Rota: <code>/despesas</code> &nbsp;|&nbsp; Acesso: todos os usuários autenticados</p>
+
+<p>Exibe os lançamentos de débito (saídas) importados via extrato bancário.</p>
+
+<h3>Filtros</h3>
+<div class="table-wrap"><table>
+  <thead><tr><th>Filtro</th><th>Descrição</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Conta</strong></td><td>Seleciona a conta bancária. A primeira é selecionada automaticamente ao carregar.</td></tr>
+    <tr><td><strong>Data início / Data fim</strong></td><td>Filtra por intervalo de datas dos lançamentos.</td></tr>
+    <tr><td><strong>Status</strong></td><td>Filtra por: Todos, Conciliado, Pendente ou Não encontrado.</td></tr>
+  </tbody>
+</table></div>
+
+<div class="table-wrap"><table>
+  <thead><tr><th>Botão</th><th>Ação</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Limpar</strong></td><td>Remove os filtros de data e status, mantendo a conta selecionada.</td></tr>
+    <tr><td><strong>Anterior / Próxima</strong></td><td>Navegação entre páginas de 50 registros. Aparecem apenas quando há mais de uma página.</td></tr>
+  </tbody>
+</table></div>
+
+<p><strong>Total filtrado:</strong> exibido em vermelho no canto superior direito — soma dos valores de todas as despesas visíveis.</p>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 id="pagar"><span class="num">9</span> Contas a Pagar</h2>
+<p class="lead">Rota: <code>/contas-pagar</code> &nbsp;|&nbsp; Permissão: <code>CONTAS_PAGAR_VIEW</code></p>
+
+<div class="callout callout-info"><span class="callout-icon">ℹ️</span><p>Contas a pagar são <strong>previsões</strong>. O status <strong>Paga</strong> é atualizado automaticamente pela conciliação bancária — não é possível marcar como paga manualmente.</p></div>
+
+<h3>Cabeçalho</h3>
+<div class="table-wrap"><table>
+  <thead><tr><th>Elemento</th><th>Descrição</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Total em aberto</strong></td><td>Soma das contas com status ABERTA (exibido em laranja).</td></tr>
+    <tr><td><strong>Nova Conta a Pagar</strong></td><td>Abre o formulário de cadastro. Visível apenas com permissão <code>CONTAS_PAGAR_CREATE</code>.</td></tr>
+  </tbody>
+</table></div>
+
+<h3>Status das contas</h3>
+<div class="table-wrap"><table>
+  <thead><tr><th>Status</th><th>Cor</th><th>Significado</th></tr></thead>
+  <tbody>
+    <tr><td>ABERTA</td><td><span class="badge badge-yellow">Amarelo</span></td><td>Ainda não paga, dentro do prazo.</td></tr>
+    <tr><td>PAGA</td><td><span class="badge badge-green">Verde</span></td><td>Conciliada — pagamento identificado no extrato.</td></tr>
+    <tr><td>ATRASADA</td><td><span class="badge badge-red">Vermelho</span></td><td>Vencimento passou sem conciliação.</td></tr>
+    <tr><td>CANCELADA</td><td><span class="badge badge-gray">Cinza</span></td><td>Conta cancelada manualmente.</td></tr>
+  </tbody>
+</table></div>
+
+<h3>Botão de edição (por linha)</h3>
+<div class="table-wrap"><table>
+  <thead><tr><th>Botão</th><th>Permissão</th><th>Ação</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Editar (lápis)</strong></td><td><code>CONTAS_PAGAR_EDIT</code></td><td>Abre o formulário de edição. Indisponível para contas com status PAGA.</td></tr>
+  </tbody>
+</table></div>
+
+<h3>Formulário de cadastro/edição</h3>
+<div class="table-wrap"><table>
+  <thead><tr><th>Campo</th><th>Obrigatório</th><th>Descrição</th></tr></thead>
+  <tbody>
+    <tr><td>Descrição</td><td>Sim</td><td>Identificação do pagamento (ex: "Aluguel Janeiro").</td></tr>
+    <tr><td>Fornecedor</td><td>Não</td><td>Nome do fornecedor ou credor.</td></tr>
+    <tr><td>Valor</td><td>Sim</td><td>Valor em reais.</td></tr>
+    <tr><td>Data de Vencimento</td><td>Sim</td><td>Data prevista para o pagamento.</td></tr>
+    <tr><td>Recorrência</td><td>Sim</td><td>Nenhuma, Semanal, Mensal, Trimestral ou Anual.</td></tr>
+    <tr><td>Status</td><td>Sim (edição)</td><td>Permite alterar para CANCELADA. Não permite marcar como PAGA.</td></tr>
+  </tbody>
+</table></div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 id="receber"><span class="num">10</span> Contas a Receber</h2>
+<p class="lead">Rota: <code>/contas-receber</code> &nbsp;|&nbsp; Permissão: <code>CONTAS_RECEBER_VIEW</code></p>
+
+<div class="callout callout-info"><span class="callout-icon">ℹ️</span><p>Contas a receber são <strong>previsões</strong>. O status <strong>Recebida</strong> é atualizado automaticamente pela conciliação bancária.</p></div>
+
+<h3>Cabeçalho</h3>
+<div class="table-wrap"><table>
+  <thead><tr><th>Elemento</th><th>Descrição</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Total em aberto</strong></td><td>Soma das contas com status ABERTA (exibido em verde).</td></tr>
+    <tr><td><strong>Nova Conta a Receber</strong></td><td>Abre o formulário. Visível apenas com permissão <code>CONTAS_RECEBER_CREATE</code>.</td></tr>
+  </tbody>
+</table></div>
+
+<h3>Status das contas</h3>
+<div class="table-wrap"><table>
+  <thead><tr><th>Status</th><th>Cor</th><th>Significado</th></tr></thead>
+  <tbody>
+    <tr><td>ABERTA</td><td><span class="badge badge-yellow">Amarelo</span></td><td>Aguardando recebimento.</td></tr>
+    <tr><td>RECEBIDA</td><td><span class="badge badge-green">Verde</span></td><td>Identificada no extrato via conciliação.</td></tr>
+    <tr><td>ATRASADA</td><td><span class="badge badge-red">Vermelho</span></td><td>Data de recebimento passou sem conciliação.</td></tr>
+    <tr><td>CANCELADA</td><td><span class="badge badge-gray">Cinza</span></td><td>Conta cancelada.</td></tr>
+  </tbody>
+</table></div>
+
+<h3>Formulário de cadastro/edição</h3>
+<div class="table-wrap"><table>
+  <thead><tr><th>Campo</th><th>Obrigatório</th><th>Descrição</th></tr></thead>
+  <tbody>
+    <tr><td>Descrição</td><td>Sim</td><td>Identificação do recebimento (ex: "Fatura Cliente XYZ").</td></tr>
+    <tr><td>Cliente</td><td>Não</td><td>Nome do cliente ou devedor.</td></tr>
+    <tr><td>Valor</td><td>Sim</td><td>Valor esperado em reais.</td></tr>
+    <tr><td>Data de Recebimento</td><td>Sim</td><td>Data prevista para o recebimento.</td></tr>
+    <tr><td>Recorrência</td><td>Sim</td><td>Nenhuma, Semanal, Mensal, Trimestral ou Anual.</td></tr>
+  </tbody>
+</table></div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 id="conciliacao"><span class="num">11</span> Conciliação Bancária</h2>
+<p class="lead">Rota: <code>/conciliacao</code> &nbsp;|&nbsp; Permissão: <code>CONCILIACAO_EXECUTAR</code></p>
+
+<h3>Filtros</h3>
+<div class="table-wrap"><table>
+  <thead><tr><th>Filtro</th><th>Descrição</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Conta</strong></td><td>Seleciona a conta bancária. A primeira é selecionada automaticamente.</td></tr>
+    <tr><td><strong>Data início / Data fim</strong></td><td>Filtra lançamentos por data.</td></tr>
+    <tr><td><strong>Tipo</strong></td><td>Filtra por Crédito ou Débito.</td></tr>
+  </tbody>
+</table></div>
+
+<h3>Ações de Conciliação</h3>
+<div class="table-wrap"><table>
+  <thead><tr><th>Botão</th><th>Ação</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Conciliação Automática</strong></td><td>O sistema tenta vincular automaticamente lançamentos do extrato com registros internos, com tolerância de ±2 dias e correspondência de valor.</td></tr>
+    <tr><td><strong>Conciliação Manual</strong></td><td>O usuário seleciona manualmente qual lançamento do extrato corresponde a qual conta a pagar/receber.</td></tr>
+    <tr><td><strong>Limpar filtros</strong></td><td>Remove filtros de data e tipo, mantendo a conta.</td></tr>
+    <tr><td><strong>Anterior / Próxima</strong></td><td>Navegação entre páginas de 50 lançamentos.</td></tr>
+  </tbody>
+</table></div>
+
+<p>Após a conciliação, o lançamento muda para status <span class="badge badge-green">Conciliado</span> e a conta a pagar/receber vinculada muda automaticamente para <span class="badge badge-green">Paga</span> ou <span class="badge badge-green">Recebida</span>.</p>
+<p>O botão de <strong>Estornar</strong> (em lançamentos já conciliados) desfaz a conciliação, retornando ambos ao status original.</p>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 id="dre"><span class="num">12</span> DRE — Resultado Financeiro</h2>
+<p class="lead">Rota: <code>/dre</code> &nbsp;|&nbsp; Acesso: SUPER_ADMIN e ADMIN_EMPRESA</p>
+
+<p>Demonstrativo de Resultado do Exercício baseado em lançamentos <strong>conciliados</strong>.</p>
+
+<div class="table-wrap"><table>
+  <thead><tr><th>Campo/Botão</th><th>Descrição</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Campo "De"</strong></td><td>Data de início do período (padrão: primeiro dia do mês atual).</td></tr>
+    <tr><td><strong>Campo "Até"</strong></td><td>Data de fim do período (padrão: último dia do mês atual).</td></tr>
+    <tr><td><strong>Calcular</strong></td><td>Recalcula o DRE para o período selecionado.</td></tr>
+  </tbody>
+</table></div>
+
+<h3>Resultado</h3>
+<div class="table-wrap"><table>
+  <thead><tr><th>Item</th><th>Cor</th><th>Descrição</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Receitas</strong></td><td>Verde</td><td>Total de créditos conciliados no período.</td></tr>
+    <tr><td><strong>Despesas</strong></td><td>Vermelho</td><td>Total de débitos conciliados no período.</td></tr>
+    <tr><td><strong>Resultado</strong></td><td>Verde (lucro) / Vermelho (prejuízo)</td><td>Receitas menos Despesas.</td></tr>
+  </tbody>
+</table></div>
+
+<div class="callout callout-warn"><span class="callout-icon">⚠️</span><p>Apenas lançamentos <strong>conciliados</strong> entram no cálculo. Se o resultado aparecer zerado, verifique se a conciliação foi executada para o período.</p></div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 id="relatorio"><span class="num">13</span> Relatório Financeiro</h2>
+<p class="lead">Rota: <code>/relatorio-financeiro</code> &nbsp;|&nbsp; Acesso: SUPER_ADMIN e ADMIN_EMPRESA</p>
+
+<p>Visão detalhada dos lançamentos por período com exportação.</p>
+
+<div class="table-wrap"><table>
+  <thead><tr><th>Botão</th><th>Acesso</th><th>Ação</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Exportar CSV</strong></td><td>SUPER_ADMIN e ADMIN_EMPRESA</td><td>Baixa um CSV com todos os lançamentos do período.</td></tr>
+  </tbody>
+</table></div>
+
+<p>A tabela exibe: Data, Tipo (Crédito/Débito), Descrição, Valor, Banco, Conta Corrente e Status de Conciliação.</p>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 id="exportacao"><span class="num">14</span> Exportação Contábil</h2>
+<p class="lead">Rota: <code>/exportacao</code> &nbsp;|&nbsp; Acesso: SUPER_ADMIN e ADMIN_EMPRESA</p>
+
+<p>Exporta lançamentos para uso em sistemas de contabilidade ou auditoria externa.</p>
+
+<div class="table-wrap"><table>
+  <thead><tr><th>Elemento</th><th>Descrição</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Período — De / Até</strong></td><td>Intervalo de datas. Padrão: mês atual.</td></tr>
+    <tr><td><strong>Baixar CSV</strong></td><td>Gera e faz download de um arquivo CSV com todos os lançamentos do período, independente do status de conciliação.</td></tr>
+  </tbody>
+</table></div>
+
+<p><strong>Estrutura do arquivo:</strong> <code>Data | Tipo | Descrição | Valor | Banco | Conta | Status</code></p>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 id="usuarios"><span class="num">15</span> Usuários</h2>
+<p class="lead">Rota: <code>/usuarios</code> &nbsp;|&nbsp; Acesso: SUPER_ADMIN e ADMIN_EMPRESA</p>
+
+<h3>Cabeçalho</h3>
+<div class="table-wrap"><table>
+  <thead><tr><th>Elemento</th><th>Quem vê</th><th>Descrição</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Indicador de licença "X / Y usuários ativos"</strong></td><td>ADMIN_EMPRESA</td><td>X = usuários ativos atuais. Y = limite contratado. Fica em vermelho quando o limite está atingido.</td></tr>
+    <tr><td><strong>Novo Usuário</strong></td><td>Todos</td><td>Abre o modal de criação. Fica desabilitado com tooltip explicativo quando o limite de licença é atingido (ADMIN_EMPRESA).</td></tr>
+  </tbody>
+</table></div>
+
+<h3>Formulário de criação (modal)</h3>
+<div class="table-wrap"><table>
+  <thead><tr><th>Campo</th><th>Obrigatório</th><th>Descrição</th></tr></thead>
+  <tbody>
+    <tr><td>Nome</td><td>Sim</td><td>Nome completo do usuário.</td></tr>
+    <tr><td>E-mail</td><td>Sim</td><td>E-mail de acesso (único no sistema).</td></tr>
+    <tr><td>Senha</td><td>Sim</td><td>Senha inicial.</td></tr>
+    <tr><td>Perfil (Role)</td><td>Sim</td><td>SUPER_ADMIN pode criar qualquer perfil. ADMIN_EMPRESA pode criar ADMIN_EMPRESA ou USUARIO.</td></tr>
+    <tr><td>Empresa</td><td>Sim (SUPER_ADMIN)</td><td>SUPER_ADMIN seleciona a empresa. ADMIN_EMPRESA já tem a empresa definida.</td></tr>
+  </tbody>
+</table></div>
+
+<div class="callout callout-success"><span class="callout-icon">✅</span><p>Ao criar um <strong>ADMIN_EMPRESA</strong>, o sistema habilita automaticamente as permissões <strong>Dashboard</strong> e <strong>Contas Bancárias</strong>.</p></div>
+<div class="callout callout-danger"><span class="callout-icon">🚫</span><p>Se o limite de usuários ativos estiver atingido, o ADMIN_EMPRESA não conseguirá criar novos usuários. A tentativa é registrada no log de auditoria. O limite é configurado pelo SUPER_ADMIN na empresa.</p></div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 id="permissoes"><span class="num">16</span> Permissões</h2>
+<p class="lead">Rota: <code>/permissoes</code> &nbsp;|&nbsp; Acesso: SUPER_ADMIN e ADMIN_EMPRESA</p>
+
+<p>Controle individual das permissões de acesso de cada usuário.</p>
+
+<h3>Painel esquerdo — lista de usuários</h3>
+<p>Campo de busca filtra por nome, e-mail ou empresa. Clique em um usuário para carregar suas permissões.</p>
+
+<h3>Painel direito — permissões</h3>
+<p>Toggles organizados em grupos. Cada toggle salva imediatamente ao clicar (sem botão de salvar).</p>
+
+<div class="table-wrap"><table>
+  <thead><tr><th>Grupo</th><th>Permissões incluídas</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Visualização</strong></td><td><code>DASHBOARD_VIEW</code>, <code>AUDITORIA_VIEW</code></td></tr>
+    <tr><td><strong>Extratos</strong></td><td><code>EXTRATO_IMPORT</code></td></tr>
+    <tr><td><strong>Conciliação</strong></td><td><code>CONCILIACAO_EXECUTAR</code></td></tr>
+    <tr><td><strong>Contas Bancárias</strong></td><td><code>CONTA_BANCARIA_VIEW</code>, <code>CONTA_BANCARIA_CREATE</code>, <code>CONTA_BANCARIA_EDIT</code></td></tr>
+    <tr><td><strong>Contas a Pagar</strong></td><td><code>CONTAS_PAGAR_VIEW</code>, <code>CONTAS_PAGAR_CREATE</code>, <code>CONTAS_PAGAR_EDIT</code></td></tr>
+    <tr><td><strong>Contas a Receber</strong></td><td><code>CONTAS_RECEBER_VIEW</code>, <code>CONTAS_RECEBER_CREATE</code>, <code>CONTAS_RECEBER_EDIT</code></td></tr>
+  </tbody>
+</table></div>
+
+<p>Toggle <span style="color:#2563eb; font-weight:600;">azul</span> = permissão habilitada. Toggle cinza = desabilitada. Um ícone giratório indica que a alteração está sendo salva.</p>
+
+<div class="callout callout-info"><span class="callout-icon">ℹ️</span><p>Usuários <strong>SUPER_ADMIN</strong> exibem todos os toggles ativados e bloqueados — não é possível alterar suas permissões pois o acesso total é intrínseco ao perfil.</p></div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 id="rel-permissoes"><span class="num">17</span> Relatório de Permissões</h2>
+<p class="lead">Rota: <code>/relatorios</code> &nbsp;|&nbsp; Acesso: SUPER_ADMIN e ADMIN_EMPRESA</p>
+
+<p>Visão consolidada de todas as permissões de todos os usuários — útil para auditoria de acessos.</p>
+
+<div class="table-wrap"><table>
+  <thead><tr><th>Elemento</th><th>Descrição</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Campo de busca</strong></td><td>Filtra por nome, e-mail ou empresa em tempo real.</td></tr>
+    <tr><td><strong>Card de usuário</strong></td><td>Exibe nome, perfil, e-mail, empresa e contador "X/13 permissões". Clique para expandir e ver o detalhe de cada permissão.</td></tr>
+    <tr><td><strong>Exportar CSV</strong></td><td>Baixa um CSV com todas as permissões de todos os usuários. Formato: Nome, E-mail, Empresa, Role, Permissão, Habilitado.</td></tr>
+  </tbody>
+</table></div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 id="auditoria"><span class="num">18</span> Auditoria</h2>
+<p class="lead">Rota: <code>/auditoria</code> &nbsp;|&nbsp; Permissão: <code>AUDITORIA_VIEW</code></p>
+
+<p>Registro imutável de todas as ações sensíveis realizadas no sistema.</p>
+
+<h3>Filtro</h3>
+<div class="table-wrap"><table>
+  <thead><tr><th>Elemento</th><th>Descrição</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Tipo de ação</strong></td><td>Dropdown para filtrar por categoria de evento.</td></tr>
+    <tr><td><strong>Limpar filtro</strong></td><td>Remove o filtro ativo. Aparece apenas quando um filtro está selecionado.</td></tr>
+  </tbody>
+</table></div>
+
+<h3>Tipos de ação registrados</h3>
+<div class="table-wrap"><table>
+  <thead><tr><th>Ação</th><th>Descrição</th></tr></thead>
+  <tbody>
+    <tr><td><code>LOGIN</code></td><td>Acesso ao sistema</td></tr>
+    <tr><td><code>IMPORTACAO_EXTRATO</code></td><td>Importação de arquivo de extrato</td></tr>
+    <tr><td><code>CONCILIACAO_AUTOMATICA</code></td><td>Execução de conciliação automática</td></tr>
+    <tr><td><code>CONCILIACAO_MANUAL</code></td><td>Vinculação manual de lançamento</td></tr>
+    <tr><td><code>ESTORNO_CONCILIACAO</code></td><td>Desfazer conciliação</td></tr>
+    <tr><td><code>CRIACAO_CONTA</code></td><td>Cadastro de conta bancária</td></tr>
+    <tr><td><code>ATUALIZACAO_CONTA</code></td><td>Edição de conta bancária</td></tr>
+    <tr><td><code>CRIACAO_EMPRESA</code></td><td>Cadastro de empresa</td></tr>
+    <tr><td><code>ATUALIZACAO_EMPRESA</code></td><td>Edição de empresa</td></tr>
+    <tr><td><code>CRIACAO_USUARIO</code></td><td>Cadastro de novo usuário</td></tr>
+    <tr><td><code>ALTERACAO_PERMISSAO</code></td><td>Alteração de permissão de usuário</td></tr>
+    <tr><td><code>CRIACAO_CONTA_PAGAR</code></td><td>Criação de conta a pagar</td></tr>
+    <tr><td><code>EDICAO_CONTA_PAGAR</code></td><td>Edição de conta a pagar</td></tr>
+    <tr><td><code>CRIACAO_CONTA_RECEBER</code></td><td>Criação de conta a receber</td></tr>
+    <tr><td><code>EDICAO_CONTA_RECEBER</code></td><td>Edição de conta a receber</td></tr>
+    <tr><td><code>ALTERACAO_LICENCA</code></td><td>Alteração do limite de usuários da empresa</td></tr>
+    <tr><td><code>TENTATIVA_LIMITE_USUARIOS</code></td><td>Tentativa bloqueada de criar usuário acima do limite</td></tr>
+    <tr><td><code>SOLICITACAO_RESET_SENHA</code></td><td>Solicitação de redefinição de senha</td></tr>
+    <tr><td><code>RESET_SENHA</code></td><td>Redefinição de senha concluída</td></tr>
+  </tbody>
+</table></div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 id="empresas"><span class="num">19</span> Empresas <span class="role-super">SUPER_ADMIN</span></h2>
+<p class="lead">Rota: <code>/empresas</code> &nbsp;|&nbsp; Acesso: exclusivo SUPER_ADMIN</p>
+
+<p>Lista todas as empresas cadastradas no sistema.</p>
+
+<div class="table-wrap"><table>
+  <thead><tr><th>Botão</th><th>Ação</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Nova Empresa</strong></td><td>Navega para o formulário de cadastro <code>/empresas/nova</code>.</td></tr>
+    <tr><td><strong>Visualizar (olho)</strong></td><td>Navega para os detalhes da empresa <code>/empresas/:id</code>.</td></tr>
+    <tr><td><strong>Editar (lápis)</strong></td><td>Navega para o formulário de edição <code>/empresas/:id/editar</code>.</td></tr>
+  </tbody>
+</table></div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 id="empresa-view"><span class="num">20</span> Visualizar Empresa</h2>
+<p class="lead">Rota: <code>/empresas/:id</code> &nbsp;|&nbsp; Acesso: SUPER_ADMIN (todas), ADMIN_EMPRESA (própria)</p>
+
+<div class="table-wrap"><table>
+  <thead><tr><th>Seção</th><th>Dados exibidos</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Identificação</strong></td><td>Razão Social, Nome Fantasia, CNPJ, Inscrição Estadual, Inscrição Municipal</td></tr>
+    <tr><td><strong>Endereço</strong></td><td>CEP, Logradouro, Número, Complemento, Bairro, Cidade, Estado</td></tr>
+    <tr><td><strong>Contato</strong></td><td>Telefone, E-mail, Site</td></tr>
+    <tr><td><strong>Licença</strong></td><td>Limite máximo de usuários ativos</td></tr>
+    <tr><td><strong>Status</strong></td><td>Ativa/Inativa, data de cadastro</td></tr>
+  </tbody>
+</table></div>
+
+<div class="table-wrap"><table>
+  <thead><tr><th>Botão</th><th>Acesso</th><th>Ação</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Editar</strong></td><td>SUPER_ADMIN</td><td>Navega para o formulário de edição.</td></tr>
+    <tr><td><strong>Voltar</strong></td><td>Todos</td><td>Retorna para a listagem de empresas.</td></tr>
+  </tbody>
+</table></div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 id="empresa-form"><span class="num">21</span> Cadastrar / Editar Empresa</h2>
+<p class="lead">Rotas: <code>/empresas/nova</code> e <code>/empresas/:id/editar</code> &nbsp;|&nbsp; Acesso: SUPER_ADMIN</p>
+
+<h3>Seção — Identificação</h3>
+<div class="table-wrap"><table>
+  <thead><tr><th>Campo</th><th>Obrigatório</th><th>Descrição</th></tr></thead>
+  <tbody>
+    <tr><td>Razão Social</td><td>Sim</td><td>Nome oficial da empresa (até 200 caracteres).</td></tr>
+    <tr><td>Nome Fantasia</td><td>Não</td><td>Nome comercial.</td></tr>
+    <tr><td>CNPJ</td><td>Sim</td><td>Formato <code>XX.XXX.XXX/XXXX-XX</code>. Validado automaticamente.</td></tr>
+    <tr><td>Inscrição Estadual</td><td>Não</td><td>Número de inscrição estadual.</td></tr>
+    <tr><td>Inscrição Municipal</td><td>Não</td><td>Número de inscrição municipal.</td></tr>
+  </tbody>
+</table></div>
+
+<h3>Seção — Endereço</h3>
+<div class="table-wrap"><table>
+  <thead><tr><th>Campo</th><th>Obrigatório</th><th>Descrição</th></tr></thead>
+  <tbody>
+    <tr><td>CEP</td><td>Não</td><td>Ao sair do campo, busca automaticamente o endereço via API e preenche logradouro, bairro, cidade e estado.</td></tr>
+    <tr><td>Logradouro</td><td>Não</td><td>Rua, Avenida, etc.</td></tr>
+    <tr><td>Número</td><td>Não</td><td>Número do imóvel.</td></tr>
+    <tr><td>Complemento</td><td>Não</td><td>Apartamento, sala, bloco, etc.</td></tr>
+    <tr><td>Bairro</td><td>Não</td><td>Bairro.</td></tr>
+    <tr><td>Cidade</td><td>Não</td><td>Cidade.</td></tr>
+    <tr><td>Estado</td><td>Não</td><td>UF com 2 letras (convertido automaticamente para maiúsculas).</td></tr>
+  </tbody>
+</table></div>
+
+<h3>Seção — Contato</h3>
+<div class="table-wrap"><table>
+  <thead><tr><th>Campo</th><th>Obrigatório</th><th>Descrição</th></tr></thead>
+  <tbody>
+    <tr><td>Telefone</td><td>Não</td><td>Formatado automaticamente como <code>(00) 00000-0000</code>.</td></tr>
+    <tr><td>E-mail</td><td>Não</td><td>E-mail de contato da empresa.</td></tr>
+    <tr><td>Site</td><td>Não</td><td>Endereço web da empresa.</td></tr>
+  </tbody>
+</table></div>
+
+<h3>Seção — Licença</h3>
+<div class="table-wrap"><table>
+  <thead><tr><th>Campo</th><th>Obrigatório</th><th>Descrição</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Limite de usuários ativos</strong></td><td>Sim</td><td>Máximo de usuários ativos permitidos. Padrão: 5. Mínimo: 1. Somente SUPER_ADMIN pode alterar.</td></tr>
+  </tbody>
+</table></div>
+
+<h3>Seção — Status (somente na edição)</h3>
+<div class="table-wrap"><table>
+  <thead><tr><th>Campo</th><th>Descrição</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Empresa ativa</strong> (checkbox)</td><td>Desmarcado = empresa inativa. Bloqueia o acesso de todos os usuários vinculados.</td></tr>
+  </tbody>
+</table></div>
+
+<h3>Botões</h3>
+<div class="table-wrap"><table>
+  <thead><tr><th>Botão</th><th>Ação</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Cancelar</strong></td><td>Retorna para a listagem sem salvar.</td></tr>
+    <tr><td><strong>Criar Empresa / Salvar Alterações</strong></td><td>Valida e salva. Desabilitado durante o processamento.</td></tr>
+  </tbody>
+</table></div>
+
+<hr />
+<p style="text-align:center; color:#94a3b8; font-size:12px;">Manual gerado com base no código-fonte do CoreFinance &nbsp;·&nbsp; Versão 2026-05-13</p>
+
+</main>
+</div>
+
+<script>
+  // Highlight active nav link on scroll
+  const sections = document.querySelectorAll('h2[id]');
+  const navLinks = document.querySelectorAll('nav a[href^="#"]');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navLinks.forEach(l => l.classList.remove('active'));
+        const active = document.querySelector(`nav a[href="#${entry.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+  sections.forEach(s => observer.observe(s));
+
+  // Smooth scroll
+  navLinks.forEach(link => {
+    link.addEventListener('click', e => {
+      e.preventDefault();
+      const target = document.querySelector(link.getAttribute('href'));
+      if (target) target.scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+</script>
+</body>
+</html>
