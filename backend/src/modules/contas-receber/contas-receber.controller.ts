@@ -69,6 +69,8 @@ export class ContasReceberController {
   }
 
   @Get(':id')
+  @RequerPermissao(ChavePermissao.CONTAS_RECEBER_VIEW)
+  @UseGuards(PermissaoGuard)
   buscar(
     @Param('id', ParseUUIDPipe) id: string,
     @CurrentUser() user: { role: Role; empresaId: string },

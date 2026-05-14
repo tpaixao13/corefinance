@@ -69,6 +69,8 @@ export class ContasPagarController {
   }
 
   @Get(':id')
+  @RequerPermissao(ChavePermissao.CONTAS_PAGAR_VIEW)
+  @UseGuards(PermissaoGuard)
   buscar(
     @Param('id', ParseUUIDPipe) id: string,
     @CurrentUser() user: { role: Role; empresaId: string },

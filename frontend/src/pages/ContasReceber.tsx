@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { TrendingUp, Plus, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useContasReceber } from '../hooks/useContasReceber';
-import { useAuth } from '../contexts/AuthContext';
 import { usePermissoesCtx } from '../contexts/PermissoesContext';
 import ContasReceberTable from '../components/ContasReceberTable';
 import ContaReceberForm from '../components/ContaReceberForm';
@@ -11,7 +10,6 @@ import type { ContaReceber } from '../types';
 const LIMIT = 50;
 
 export default function ContasReceber() {
-  const { user } = useAuth();
   const { temPermissao, isLoading: permLoading } = usePermissoesCtx();
 
   if (!permLoading && !temPermissao('CONTAS_RECEBER_VIEW')) return <AcessoNegado />;
