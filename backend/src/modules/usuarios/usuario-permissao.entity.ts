@@ -15,8 +15,10 @@ export enum ChavePermissao {
   EXTRATO_IMPORT = 'EXTRATO_IMPORT',
   CONCILIACAO_EXECUTAR = 'CONCILIACAO_EXECUTAR',
   CONTAS_PAGAR_VIEW = 'CONTAS_PAGAR_VIEW',
+  CONTAS_PAGAR_CREATE = 'CONTAS_PAGAR_CREATE',
   CONTAS_PAGAR_EDIT = 'CONTAS_PAGAR_EDIT',
   CONTAS_RECEBER_VIEW = 'CONTAS_RECEBER_VIEW',
+  CONTAS_RECEBER_CREATE = 'CONTAS_RECEBER_CREATE',
   CONTAS_RECEBER_EDIT = 'CONTAS_RECEBER_EDIT',
   AUDITORIA_VIEW = 'AUDITORIA_VIEW',
   CONTA_BANCARIA_VIEW = 'CONTA_BANCARIA_VIEW',
@@ -29,8 +31,10 @@ export const PERMISSOES_DESCRICOES: Record<ChavePermissao, string> = {
   [ChavePermissao.EXTRATO_IMPORT]: 'Importar Extrato',
   [ChavePermissao.CONCILIACAO_EXECUTAR]: 'Executar Conciliação',
   [ChavePermissao.CONTAS_PAGAR_VIEW]: 'Ver Contas a Pagar',
+  [ChavePermissao.CONTAS_PAGAR_CREATE]: 'Criar Contas a Pagar',
   [ChavePermissao.CONTAS_PAGAR_EDIT]: 'Editar Contas a Pagar',
   [ChavePermissao.CONTAS_RECEBER_VIEW]: 'Ver Contas a Receber',
+  [ChavePermissao.CONTAS_RECEBER_CREATE]: 'Criar Contas a Receber',
   [ChavePermissao.CONTAS_RECEBER_EDIT]: 'Editar Contas a Receber',
   [ChavePermissao.AUDITORIA_VIEW]: 'Ver Auditoria',
   [ChavePermissao.CONTA_BANCARIA_VIEW]: 'Ver Contas Bancárias',
@@ -57,11 +61,11 @@ export const PERMISSOES_GRUPOS: { label: string; chaves: ChavePermissao[] }[] = 
   },
   {
     label: 'Contas a Pagar',
-    chaves: [ChavePermissao.CONTAS_PAGAR_VIEW, ChavePermissao.CONTAS_PAGAR_EDIT],
+    chaves: [ChavePermissao.CONTAS_PAGAR_VIEW, ChavePermissao.CONTAS_PAGAR_CREATE, ChavePermissao.CONTAS_PAGAR_EDIT],
   },
   {
     label: 'Contas a Receber',
-    chaves: [ChavePermissao.CONTAS_RECEBER_VIEW, ChavePermissao.CONTAS_RECEBER_EDIT],
+    chaves: [ChavePermissao.CONTAS_RECEBER_VIEW, ChavePermissao.CONTAS_RECEBER_CREATE, ChavePermissao.CONTAS_RECEBER_EDIT],
   },
 ];
 

@@ -21,7 +21,8 @@ export default function ContasReceber() {
 
   const { data, isLoading, isError } = useContasReceber(page, LIMIT);
 
-  const canEdit = user?.role === 'ADMIN_EMPRESA';
+  const canCreate = temPermissao('CONTAS_RECEBER_CREATE');
+  const canEdit = temPermissao('CONTAS_RECEBER_EDIT');
 
   const contas = data?.data ?? [];
   const totalPaginas = Math.ceil((data?.total ?? 0) / LIMIT);
@@ -57,7 +58,7 @@ export default function ContasReceber() {
             <p className="text-xl font-bold text-green-600">{brl(totalAberto)}</p>
           </div>
 
-          {canEdit && (
+          {canCreate && (
             <button
               onClick={() => setShowForm(true)}
               className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2.5 rounded-lg transition-colors"

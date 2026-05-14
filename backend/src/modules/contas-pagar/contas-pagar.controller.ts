@@ -6,10 +6,12 @@ import {
   Param,
   Body,
   Query,
+  Headers,
   UseGuards,
   ParseUUIDPipe,
   ParseIntPipe,
   DefaultValuePipe,
+  BadRequestException,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
@@ -29,45 +31,64 @@ import { UpdateContaPagarDto } from './dto/update-conta-pagar.dto';
 export class ContasPagarController {
   constructor(private readonly service: ContasPagarService) {}
 
+  private resolveEmpresaId(
+    user: { role: Role; empresaId: string },
+    headerEmpresaId: string,
+  ): string {
+    if (user.role === Role.SUPER_ADMIN) {
+      if (!headerEmpresaId) throw new BadRequestException('Selecione uma empresa antes de continuar');
+      return headerEmpresaId;
+    }
+    return user.empresaId;
+  }
+
   @Post()
-  @Roles(Role.ADMIN_EMPRESA)
-  @RequerPermissao(ChavePermissao.CONTAS_PAGAR_EDIT)
+  @Roles(Role.SUPER_ADMIN, Role.ADMIN_EMPRESA)
+  @RequerPermissao(ChavePermissao.CONTAS_PAGAR_CREATE)
   @UseGuards(PermissaoGuard)
   criar(
     @Body() dto: CreateContaPagarDto,
-    @CurrentUser() user: { empresaId: string },
+    @CurrentUser() user: { id: string; role: Role; empresaId: string },
+    @Headers('x-empresa-id') empresaIdHeader: string,
   ) {
-    return this.service.criar(dto, user.empresaId);
+    const empresaId = this.resolveEmpresaId(user, empresaIdHeader);
+    return this.service.criar(dto, empresaId, user.id);
   }
 
   @Get()
   @RequerPermissao(ChavePermissao.CONTAS_PAGAR_VIEW)
   @UseGuards(PermissaoGuard)
   listar(
-    @CurrentUser() user: { empresaId: string },
+    @CurrentUser() user: { role: Role; empresaId: string },
+    @Headers('x-empresa-id') empresaIdHeader: string,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(50), ParseIntPipe) limit: number,
   ) {
-    return this.service.listar(user.empresaId, page, limit);
+    const empresaId = this.resolveEmpresaId(user, empresaIdHeader);
+    return this.service.listar(empresaId, page, limit);
   }
 
   @Get(':id')
   buscar(
     @Param('id', ParseUUIDPipe) id: string,
-    @CurrentUser() user: { empresaId: string },
+    @CurrentUser() user: { role: Role; empresaId: string },
+    @Headers('x-empresa-id') empresaIdHeader: string,
   ) {
-    return this.service.buscarPorId(id, user.empresaId);
+    const empresaId = this.resolveEmpresaId(user, empresaIdHeader);
+    return this.service.buscarPorId(id, empresaId);
   }
 
   @Put(':id')
-  @Roles(Role.ADMIN_EMPRESA)
+  @Roles(Role.SUPER_ADMIN, Role.ADMIN_EMPRESA)
   @RequerPermissao(ChavePermissao.CONTAS_PAGAR_EDIT)
   @UseGuards(PermissaoGuard)
   atualizar(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateContaPagarDto,
-    @CurrentUser() user: { empresaId: string },
+    @CurrentUser() user: { id: string; role: Role; empresaId: string },
+    @Headers('x-empresa-id') empresaIdHeader: string,
   ) {
-    return this.service.atualizar(id, dto, user.empresaId);
+    const empresaId = this.resolveEmpresaId(user, empresaIdHeader);
+    return this.service.atualizar(id, dto, empresaId, user.id);
   }
 }
