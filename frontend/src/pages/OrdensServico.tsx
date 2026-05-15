@@ -132,6 +132,7 @@ export default function OrdensServico() {
             <table className="w-full text-sm">
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
+                  <th className="text-left px-4 py-3 font-medium text-gray-600 w-24">Nº</th>
                   <th className="text-left px-4 py-3 font-medium text-gray-600">Cliente</th>
                   <th className="text-left px-4 py-3 font-medium text-gray-600">Descrição</th>
                   <th className="text-right px-4 py-3 font-medium text-gray-600">Valor</th>
@@ -144,6 +145,9 @@ export default function OrdensServico() {
               <tbody className="divide-y divide-gray-100">
                 {ordens.map((os) => (
                   <tr key={os.id} className="hover:bg-gray-50">
+                    <td className="px-4 py-3 font-mono text-xs font-medium text-gray-500">
+                      {String(os.numero).padStart(6, '0')}
+                    </td>
                     <td className="px-4 py-3 font-medium text-gray-800">{os.cliente}</td>
                     <td className="px-4 py-3 text-gray-600 max-w-xs truncate" title={os.descricao}>
                       {os.descricao}

@@ -24,6 +24,9 @@ export class OrdemServico {
   @Column({ name: 'empresa_id', type: 'uuid' })
   empresaId: string;
 
+  @Column({ type: 'int' })
+  numero: number;
+
   @ManyToOne(() => Empresa)
   @JoinColumn({ name: 'empresa_id' })
   empresa: Empresa;

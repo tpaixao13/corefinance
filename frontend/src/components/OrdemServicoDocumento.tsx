@@ -42,7 +42,7 @@ export default function OrdemServicoDocumento({ os, empresa }: Props) {
         </div>
         <div className="text-right text-white">
           <div className="text-xs tracking-widest opacity-70 uppercase mb-1">Ordem de Serviço</div>
-          <div className="text-2xl font-bold font-mono">#{os.id.slice(0, 8).toUpperCase()}</div>
+          <div className="text-2xl font-bold font-mono">Nº {String(os.numero).padStart(6, '0')}</div>
         </div>
       </div>
 

@@ -37,12 +37,23 @@ export class OrdensServicoService {
     return cliente;
   }
 
+  private async proximoNumero(empresaId: string): Promise<number> {
+    const ultima = await this.repo.findOne({
+      where: { empresaId },
+      order: { numero: 'DESC' },
+      select: ['numero'],
+    });
+    return (ultima?.numero ?? 0) + 1;
+  }
+
   async criar(dto: CreateOrdemServicoDto, empresaId: string, operadorId: string): Promise<OrdemServico> {
     const cliente = await this.resolveCliente(dto.clienteId, empresaId);
+    const numero = await this.proximoNumero(empresaId);
 
     const os = this.repo.create({
       ...dto,
       empresaId,
+      numero,
       cliente: cliente.nome,
       emailCliente: dto.emailCliente ?? cliente.email ?? null,
     });
@@ -126,7 +137,7 @@ export class OrdensServicoService {
 
     const contaReceber = await this.contasReceberService.criar(
       {
-        descricao: `OS #${os.id.slice(0, 8).toUpperCase()} — ${os.cliente}: ${os.descricao}`,
+        descricao: `OS #${String(os.numero).padStart(6, '0')} — ${os.cliente}: ${os.descricao}`,
         cliente: os.cliente,
         clienteId: os.clienteId ?? undefined,
         valor: Number(os.valor),

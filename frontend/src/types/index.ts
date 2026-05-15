@@ -344,6 +344,7 @@ export type StatusOrdemServico = 'ABERTA' | 'EM_ANDAMENTO' | 'CONCLUIDA' | 'CANC
 export interface OrdemServico {
   id: string;
   empresaId: string;
+  numero: number;
   cliente: string;
   descricao: string;
   valor: number;
