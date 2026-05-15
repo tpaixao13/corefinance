@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { X, Save } from 'lucide-react';
-import type { OrdemServico, CreateOrdemServicoPayload, UpdateOrdemServicoPayload } from '../types';
+import type { OrdemServico, Cliente, CreateOrdemServicoPayload, UpdateOrdemServicoPayload } from '../types';
+import ClienteAutocomplete from './ClienteAutocomplete';
 
 interface Props {
   os?: OrdemServico | null;
@@ -10,16 +11,18 @@ interface Props {
 }
 
 const inputCls = 'w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500';
-
 const hoje = () => new Date().toISOString().split('T')[0];
 
 export default function OrdemServicoForm({ os, onClose, onSave, isPending }: Props) {
   const isEdit = !!os;
+
+  const [clienteSelecionado, setClienteSelecionado] = useState<Cliente | null>(null);
   const [form, setForm] = useState({
     cliente: '',
     descricao: '',
     valor: '',
     dataAbertura: hoje(),
+    emailCliente: '',
   });
 
   useEffect(() => {
@@ -29,6 +32,7 @@ export default function OrdemServicoForm({ os, onClose, onSave, isPending }: Pro
         descricao: os.descricao,
         valor: String(os.valor),
         dataAbertura: os.dataAbertura,
+        emailCliente: os.emailCliente ?? '',
       });
     }
   }, [os]);
@@ -37,21 +41,34 @@ export default function OrdemServicoForm({ os, onClose, onSave, isPending }: Pro
     setForm((f) => ({ ...f, [field]: value }));
   }
 
+  function handleClienteChange(c: Cliente | null) {
+    setClienteSelecionado(c);
+    if (c) {
+      setForm((f) => ({
+        ...f,
+        cliente: c.nome,
+        emailCliente: c.email ?? f.emailCliente,
+      }));
+    }
+  }
+
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    const payload = {
+    const payload: CreateOrdemServicoPayload = {
       cliente: form.cliente,
       descricao: form.descricao,
       valor: parseFloat(form.valor),
       dataAbertura: form.dataAbertura,
+      clienteId: clienteSelecionado?.id,
+      emailCliente: form.emailCliente || undefined,
     };
     onSave(payload);
   }
 
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl shadow-xl w-full max-w-lg">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+      <div className="bg-white rounded-xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 sticky top-0 bg-white z-10">
           <h3 className="text-base font-semibold text-gray-800">
             {isEdit ? 'Editar Ordem de Serviço' : 'Nova Ordem de Serviço'}
           </h3>
@@ -61,17 +78,36 @@ export default function OrdemServicoForm({ os, onClose, onSave, isPending }: Pro
         </div>
 
         <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4">
+          {/* Cliente com autocomplete */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1.5">
               Cliente <span className="text-red-500">*</span>
             </label>
+            <ClienteAutocomplete value={clienteSelecionado} onChange={handleClienteChange} />
+            {/* fallback texto se nenhum cliente selecionado */}
+            {!clienteSelecionado && (
+              <input
+                type="text"
+                value={form.cliente}
+                onChange={(e) => set('cliente', e.target.value)}
+                required
+                maxLength={200}
+                placeholder="Ou digite o nome do cliente manualmente"
+                className={`${inputCls} mt-2`}
+              />
+            )}
+          </div>
+
+          {/* E-mail do cliente */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              E-mail do cliente <span className="text-xs text-gray-400">(usado para envio por e-mail)</span>
+            </label>
             <input
-              type="text"
-              value={form.cliente}
-              onChange={(e) => set('cliente', e.target.value)}
-              required
-              maxLength={200}
-              placeholder="Nome do cliente"
+              type="email"
+              value={form.emailCliente}
+              onChange={(e) => set('emailCliente', e.target.value)}
+              placeholder="cliente@email.com (opcional)"
               className={inputCls}
             />
           </div>
@@ -107,7 +143,6 @@ export default function OrdemServicoForm({ os, onClose, onSave, isPending }: Pro
                 className={inputCls}
               />
             </div>
-
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1.5">
                 Data de Abertura <span className="text-red-500">*</span>

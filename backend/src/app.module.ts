@@ -15,6 +15,7 @@ import { ContasReceberModule } from './modules/contas-receber/contas-receber.mod
 import { EnderecosModule } from './modules/enderecos/enderecos.module';
 import { RelatoriosModule } from './modules/relatorios/relatorios.module';
 import { OrdensServicoModule } from './modules/ordens-servico/ordens-servico.module';
+import { ClientesModule } from './modules/clientes/clientes.module';
 
 @Module({
   imports: [
@@ -55,6 +56,7 @@ import { OrdensServicoModule } from './modules/ordens-servico/ordens-servico.mod
     EnderecosModule,
     RelatoriosModule,
     OrdensServicoModule,
+    ClientesModule,
   ],
 })
 export class AppModule {}

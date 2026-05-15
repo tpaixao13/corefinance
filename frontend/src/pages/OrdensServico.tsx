@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { ClipboardList, Plus, Pencil, CheckCircle, XCircle, X, CalendarCheck } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { ClipboardList, Plus, Pencil, CheckCircle, XCircle, X, CalendarCheck, FileText } from 'lucide-react';
 import {
   useOrdensServico,
   useCriarOrdemServico,
@@ -32,6 +33,7 @@ const fmtData = (d: string | null) =>
   d ? new Date(d + 'T00:00:00').toLocaleDateString('pt-BR') : '—';
 
 export default function OrdensServico() {
+  const navigate = useNavigate();
   const { temPermissao } = usePermissoesCtx();
 
   const { data, isLoading, isError, error } = useOrdensServico();
@@ -157,38 +159,43 @@ export default function OrdensServico() {
                       </span>
                     </td>
                     <td className="px-4 py-3">
-                      {!isTerminal(os.status) && (
-                        <div className="flex items-center gap-2 justify-end">
-                          {canEdit && (
-                            <button
-                              onClick={() => { setEditando(os); setShowForm(true); setErrorMsg(''); }}
-                              className="text-gray-400 hover:text-blue-600 transition-colors"
-                              title="Editar"
-                            >
-                              <Pencil size={15} />
-                            </button>
-                          )}
-                          {canFinalizar && (
-                            <button
-                              onClick={() => { setFinalizarOs(os); setDataConclusao(new Date().toISOString().split('T')[0]); setErrorMsg(''); }}
-                              className="text-gray-400 hover:text-green-600 transition-colors"
-                              title="Finalizar"
-                            >
-                              <CheckCircle size={15} />
-                            </button>
-                          )}
-                          {canEdit && (
-                            <button
-                              onClick={() => handleCancelar(os)}
-                              disabled={cancelando}
-                              className="text-gray-400 hover:text-red-600 transition-colors"
-                              title="Cancelar OS"
-                            >
-                              <XCircle size={15} />
-                            </button>
-                          )}
-                        </div>
-                      )}
+                      <div className="flex items-center gap-2 justify-end">
+                        <button
+                          onClick={() => navigate(`/ordens-servico/${os.id}`)}
+                          className="text-gray-400 hover:text-gray-700 transition-colors"
+                          title="Ver documento"
+                        >
+                          <FileText size={15} />
+                        </button>
+                        {!isTerminal(os.status) && canEdit && (
+                          <button
+                            onClick={() => { setEditando(os); setShowForm(true); setErrorMsg(''); }}
+                            className="text-gray-400 hover:text-blue-600 transition-colors"
+                            title="Editar"
+                          >
+                            <Pencil size={15} />
+                          </button>
+                        )}
+                        {!isTerminal(os.status) && canFinalizar && (
+                          <button
+                            onClick={() => { setFinalizarOs(os); setDataConclusao(new Date().toISOString().split('T')[0]); setErrorMsg(''); }}
+                            className="text-gray-400 hover:text-green-600 transition-colors"
+                            title="Finalizar"
+                          >
+                            <CheckCircle size={15} />
+                          </button>
+                        )}
+                        {!isTerminal(os.status) && canEdit && (
+                          <button
+                            onClick={() => handleCancelar(os)}
+                            disabled={cancelando}
+                            className="text-gray-400 hover:text-red-600 transition-colors"
+                            title="Cancelar OS"
+                          >
+                            <XCircle size={15} />
+                          </button>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))}

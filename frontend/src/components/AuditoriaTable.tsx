@@ -18,6 +18,7 @@ const ACAO_LABEL: Record<AcaoAuditoria, string> = {
   EDICAO_OS: 'Edição de OS',
   FINALIZACAO_OS: 'Finalização de OS',
   CANCELAMENTO_OS: 'Cancelamento de OS',
+  ENVIO_EMAIL_OS: 'Envio de E-mail OS',
 };
 
 const ACAO_COR: Record<AcaoAuditoria, string> = {
@@ -38,6 +39,7 @@ const ACAO_COR: Record<AcaoAuditoria, string> = {
   EDICAO_OS: 'bg-sky-100 text-sky-700',
   FINALIZACAO_OS: 'bg-green-100 text-green-700',
   CANCELAMENTO_OS: 'bg-gray-100 text-gray-500',
+  ENVIO_EMAIL_OS: 'bg-indigo-100 text-indigo-700',
 };
 
 function formatarData(iso: string) {

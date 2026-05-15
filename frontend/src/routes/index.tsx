@@ -22,6 +22,7 @@ import Exportacao from '../pages/Exportacao';
 import EsqueciSenha from '../pages/EsqueciSenha';
 import ResetSenha from '../pages/ResetSenha';
 import OrdensServico from '../pages/OrdensServico';
+import OrdemServicoView from '../pages/OrdemServicoView';
 
 function PrivateRoute() {
   const { isAuthenticated } = useAuth();
@@ -66,6 +67,7 @@ export default function AppRoutes() {
             <Route path="/relatorio-financeiro" element={<RelatorioFinanceiro />} />
             <Route path="/exportacao" element={<Exportacao />} />
             <Route path="/ordens-servico" element={<OrdensServico />} />
+            <Route path="/ordens-servico/:id" element={<OrdemServicoView />} />
           </Route>
         </Route>
 

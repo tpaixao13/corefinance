@@ -45,3 +45,10 @@ export function useCancelarOrdemServico() {
     onSuccess: () => qc.invalidateQueries({ queryKey: [KEY] }),
   });
 }
+
+export function useEnviarEmailOs() {
+  return useMutation({
+    mutationFn: ({ id, email }: { id: string; email?: string }) =>
+      ordensServicoApi.enviarEmail(id, email),
+  });
+}

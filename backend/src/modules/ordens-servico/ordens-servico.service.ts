@@ -12,14 +12,19 @@ import { UpdateOrdemServicoDto } from './dto/update-ordem-servico.dto';
 import { ContasReceberService } from '../contas-receber/contas-receber.service';
 import { AuditoriaService } from '../auditoria/auditoria.service';
 import { AcaoAuditoria } from '../auditoria/auditoria-log.entity';
+import { OsMailService } from './os-mail.service';
+import { Empresa } from '../empresas/empresa.entity';
 
 @Injectable()
 export class OrdensServicoService {
   constructor(
     @InjectRepository(OrdemServico)
     private readonly repo: Repository<OrdemServico>,
+    @InjectRepository(Empresa)
+    private readonly empresaRepo: Repository<Empresa>,
     private readonly contasReceberService: ContasReceberService,
     private readonly auditoriaService: AuditoriaService,
+    private readonly mailService: OsMailService,
   ) {}
 
   async criar(dto: CreateOrdemServicoDto, empresaId: string, operadorId: string): Promise<OrdemServico> {
@@ -142,5 +147,29 @@ export class OrdensServicoService {
     }).catch((err) => console.error('[auditoria] CANCELAMENTO_OS falhou:', err));
 
     return cancelada;
+  }
+
+  async enviarEmail(id: string, emailDestino: string | null, empresaId: string, operadorId: string): Promise<{ enviado: boolean; para: string }> {
+    const os = await this.buscarPorId(id, empresaId);
+    const empresa = await this.empresaRepo.findOne({ where: { id: empresaId } });
+    if (!empresa) throw new NotFoundException('Empresa não encontrada');
+
+    const para = emailDestino || os.emailCliente;
+    if (!para) {
+      throw new BadRequestException('E-mail do destinatário não encontrado. Informe um e-mail ou cadastre um cliente com e-mail.');
+    }
+
+    await this.mailService.enviar(para, os, empresa);
+
+    this.auditoriaService.registrar({
+      usuarioId: operadorId,
+      empresaId,
+      acao: AcaoAuditoria.ENVIO_EMAIL_OS,
+      entidade: 'ordem_servico',
+      entidadeId: os.id,
+      dadosDepois: { emailDestino: para },
+    }).catch((err) => console.error('[auditoria] ENVIO_EMAIL_OS falhou:', err));
+
+    return { enviado: true, para };
   }
 }

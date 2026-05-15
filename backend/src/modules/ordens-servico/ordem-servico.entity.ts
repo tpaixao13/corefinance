@@ -53,6 +53,12 @@ export class OrdemServico {
   @Column({ name: 'conta_receber_id', type: 'uuid', nullable: true })
   contaReceberId: string | null;
 
+  @Column({ name: 'cliente_id', type: 'uuid', nullable: true })
+  clienteId: string | null;
+
+  @Column({ name: 'email_cliente', length: 200, nullable: true })
+  emailCliente: string | null;
+
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 

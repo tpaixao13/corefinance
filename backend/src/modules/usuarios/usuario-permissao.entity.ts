@@ -28,6 +28,8 @@ export enum ChavePermissao {
   ORDEM_SERVICO_CREATE = 'ORDEM_SERVICO_CREATE',
   ORDEM_SERVICO_EDIT = 'ORDEM_SERVICO_EDIT',
   ORDEM_SERVICO_FINALIZAR = 'ORDEM_SERVICO_FINALIZAR',
+  ORDEM_SERVICO_ENVIAR_EMAIL = 'ORDEM_SERVICO_ENVIAR_EMAIL',
+  ORDEM_SERVICO_IMPRIMIR = 'ORDEM_SERVICO_IMPRIMIR',
 }
 
 export const PERMISSOES_DESCRICOES: Record<ChavePermissao, string> = {
@@ -48,6 +50,8 @@ export const PERMISSOES_DESCRICOES: Record<ChavePermissao, string> = {
   [ChavePermissao.ORDEM_SERVICO_CREATE]: 'Criar Ordem de Serviço',
   [ChavePermissao.ORDEM_SERVICO_EDIT]: 'Editar/Cancelar OS',
   [ChavePermissao.ORDEM_SERVICO_FINALIZAR]: 'Finalizar Ordem de Serviço',
+  [ChavePermissao.ORDEM_SERVICO_ENVIAR_EMAIL]: 'Enviar OS por E-mail',
+  [ChavePermissao.ORDEM_SERVICO_IMPRIMIR]: 'Imprimir Ordem de Serviço',
 };
 
 export const PERMISSOES_GRUPOS: { label: string; chaves: ChavePermissao[] }[] = [
@@ -82,6 +86,8 @@ export const PERMISSOES_GRUPOS: { label: string; chaves: ChavePermissao[] }[] = 
       ChavePermissao.ORDEM_SERVICO_CREATE,
       ChavePermissao.ORDEM_SERVICO_EDIT,
       ChavePermissao.ORDEM_SERVICO_FINALIZAR,
+      ChavePermissao.ORDEM_SERVICO_ENVIAR_EMAIL,
+      ChavePermissao.ORDEM_SERVICO_IMPRIMIR,
     ],
   },
 ];

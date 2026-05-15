@@ -24,6 +24,9 @@ export class Empresa {
   @Column({ name: 'max_usuarios', default: 1 })
   maxUsuarios: number;
 
+  @Column({ name: 'logo_url', length: 500, nullable: true })
+  logoUrl: string | null;
+
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 

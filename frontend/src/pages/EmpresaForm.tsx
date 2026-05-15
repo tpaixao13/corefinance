@@ -33,6 +33,7 @@ interface FormData extends EnderecoFormData {
   site: string;
   ativo: boolean;
   maxUsuarios: number;
+  logoUrl: string;
 }
 
 const VAZIO: FormData = {
@@ -43,6 +44,7 @@ const VAZIO: FormData = {
   telefone: '', email: '', site: '',
   ativo: true,
   maxUsuarios: 1,
+  logoUrl: '',
 };
 
 const inputCls =
@@ -83,6 +85,7 @@ export default function EmpresaFormPage() {
         site: empresa.site ?? '',
         ativo: empresa.ativo,
         maxUsuarios: empresa.maxUsuarios ?? 1,
+        logoUrl: empresa.logoUrl ?? '',
       });
     }
   }, [empresa]);
@@ -131,6 +134,7 @@ export default function EmpresaFormPage() {
       email: form.email || undefined,
       site: form.site || undefined,
       maxUsuarios: form.maxUsuarios,
+      logoUrl: form.logoUrl || undefined,
     };
   }
 
@@ -317,6 +321,22 @@ export default function EmpresaFormPage() {
               className={inputCls}
             />
             <p className="text-xs text-gray-400 mt-1">Número máximo de usuários ativos permitidos para esta empresa.</p>
+          </div>
+          <div className="max-w-lg">
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              URL do Logotipo
+            </label>
+            <input
+              type="url"
+              value={form.logoUrl}
+              onChange={(e) => set('logoUrl', e.target.value)}
+              placeholder="https://sua-empresa.com/logo.png (opcional)"
+              className={inputCls}
+            />
+            <p className="text-xs text-gray-400 mt-1">Exibido no cabeçalho das Ordens de Serviço.</p>
+            {form.logoUrl && (
+              <img src={form.logoUrl} alt="Pré-visualização" className="mt-2 h-12 object-contain border border-gray-200 rounded p-1" />
+            )}
           </div>
         </section>
 

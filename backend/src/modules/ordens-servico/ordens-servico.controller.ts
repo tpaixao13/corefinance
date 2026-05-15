@@ -14,7 +14,7 @@ import {
   DefaultValuePipe,
   BadRequestException,
 } from '@nestjs/common';
-import { IsString, IsNotEmpty, IsDateString } from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional, IsEmail } from 'class-validator';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { TenantGuard } from '../../common/guards/tenant.guard';
@@ -34,15 +34,21 @@ class FinalizarOsDto {
   dataConclusao: string;
 }
 
+class EnviarEmailOsDto {
+  @IsOptional()
+  @IsEmail()
+  email?: string;
+}
+
 @Controller('ordens-servico')
 @UseGuards(JwtAuthGuard, RolesGuard, TenantGuard)
 export class OrdensServicoController {
   constructor(private readonly service: OrdensServicoService) {}
 
-  private resolveEmpresaId(user: { role: Role; empresaId: string }, headerEmpresaId: string): string {
+  private resolveEmpresaId(user: { role: Role; empresaId: string }, header: string): string {
     if (user.role === Role.SUPER_ADMIN) {
-      if (!headerEmpresaId) throw new BadRequestException('Selecione uma empresa antes de continuar');
-      return headerEmpresaId;
+      if (!header) throw new BadRequestException('Selecione uma empresa antes de continuar');
+      return header;
     }
     return user.empresaId;
   }
@@ -54,9 +60,9 @@ export class OrdensServicoController {
   criar(
     @Body() dto: CreateOrdemServicoDto,
     @CurrentUser() user: { id: string; role: Role; empresaId: string },
-    @Headers('x-empresa-id') empresaIdHeader: string,
+    @Headers('x-empresa-id') header: string,
   ) {
-    return this.service.criar(dto, this.resolveEmpresaId(user, empresaIdHeader), user.id);
+    return this.service.criar(dto, this.resolveEmpresaId(user, header), user.id);
   }
 
   @Get()
@@ -64,11 +70,11 @@ export class OrdensServicoController {
   @UseGuards(PermissaoGuard)
   listar(
     @CurrentUser() user: { role: Role; empresaId: string },
-    @Headers('x-empresa-id') empresaIdHeader: string,
+    @Headers('x-empresa-id') header: string,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(50), ParseIntPipe) limit: number,
   ) {
-    return this.service.listar(this.resolveEmpresaId(user, empresaIdHeader), page, limit);
+    return this.service.listar(this.resolveEmpresaId(user, header), page, limit);
   }
 
   @Get(':id')
@@ -77,9 +83,9 @@ export class OrdensServicoController {
   buscar(
     @Param('id', ParseUUIDPipe) id: string,
     @CurrentUser() user: { role: Role; empresaId: string },
-    @Headers('x-empresa-id') empresaIdHeader: string,
+    @Headers('x-empresa-id') header: string,
   ) {
-    return this.service.buscarPorId(id, this.resolveEmpresaId(user, empresaIdHeader));
+    return this.service.buscarPorId(id, this.resolveEmpresaId(user, header));
   }
 
   @Put(':id')
@@ -90,9 +96,9 @@ export class OrdensServicoController {
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateOrdemServicoDto,
     @CurrentUser() user: { id: string; role: Role; empresaId: string },
-    @Headers('x-empresa-id') empresaIdHeader: string,
+    @Headers('x-empresa-id') header: string,
   ) {
-    return this.service.atualizar(id, dto, this.resolveEmpresaId(user, empresaIdHeader), user.id);
+    return this.service.atualizar(id, dto, this.resolveEmpresaId(user, header), user.id);
   }
 
   @Patch(':id/finalizar')
@@ -103,9 +109,9 @@ export class OrdensServicoController {
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: FinalizarOsDto,
     @CurrentUser() user: { id: string; role: Role; empresaId: string },
-    @Headers('x-empresa-id') empresaIdHeader: string,
+    @Headers('x-empresa-id') header: string,
   ) {
-    return this.service.finalizar(id, dto.dataConclusao, this.resolveEmpresaId(user, empresaIdHeader), user.id);
+    return this.service.finalizar(id, dto.dataConclusao, this.resolveEmpresaId(user, header), user.id);
   }
 
   @Patch(':id/cancelar')
@@ -115,8 +121,21 @@ export class OrdensServicoController {
   cancelar(
     @Param('id', ParseUUIDPipe) id: string,
     @CurrentUser() user: { id: string; role: Role; empresaId: string },
-    @Headers('x-empresa-id') empresaIdHeader: string,
+    @Headers('x-empresa-id') header: string,
   ) {
-    return this.service.cancelar(id, this.resolveEmpresaId(user, empresaIdHeader), user.id);
+    return this.service.cancelar(id, this.resolveEmpresaId(user, header), user.id);
+  }
+
+  @Post(':id/enviar-email')
+  @Roles(Role.SUPER_ADMIN, Role.ADMIN_EMPRESA)
+  @RequerPermissao(ChavePermissao.ORDEM_SERVICO_ENVIAR_EMAIL)
+  @UseGuards(PermissaoGuard)
+  enviarEmail(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: EnviarEmailOsDto,
+    @CurrentUser() user: { id: string; role: Role; empresaId: string },
+    @Headers('x-empresa-id') header: string,
+  ) {
+    return this.service.enviarEmail(id, dto.email ?? null, this.resolveEmpresaId(user, header), user.id);
   }
 }

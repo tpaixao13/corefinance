@@ -38,6 +38,7 @@ export interface Empresa {
   // Status
   ativo: boolean;
   maxUsuarios: number;
+  logoUrl?: string | null;
   createdAt: string;
 }
 
@@ -221,7 +222,8 @@ export type AcaoAuditoria =
   | 'CRIACAO_OS'
   | 'EDICAO_OS'
   | 'FINALIZACAO_OS'
-  | 'CANCELAMENTO_OS';
+  | 'CANCELAMENTO_OS'
+  | 'ENVIO_EMAIL_OS';
 
 export interface AuditoriaLog {
   id: string;
@@ -304,6 +306,27 @@ export interface UpdateContaReceberPayload {
   status?: StatusContaReceber;
 }
 
+// ── Clientes ──────────────────────────────────────────
+export interface Cliente {
+  id: string;
+  empresaId: string;
+  nome: string;
+  cpfCnpj: string | null;
+  email: string | null;
+  telefone: string | null;
+  endereco: string | null;
+  ativo: boolean;
+  createdAt: string;
+}
+
+export interface CreateClientePayload {
+  nome: string;
+  cpfCnpj?: string;
+  email?: string;
+  telefone?: string;
+  endereco?: string;
+}
+
 // ── Ordens de Serviço ─────────────────────────────────
 export type StatusOrdemServico = 'ABERTA' | 'EM_ANDAMENTO' | 'CONCLUIDA' | 'CANCELADA';
 
@@ -317,6 +340,8 @@ export interface OrdemServico {
   dataAbertura: string;
   dataConclusao: string | null;
   contaReceberId: string | null;
+  clienteId: string | null;
+  emailCliente: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -326,6 +351,8 @@ export interface CreateOrdemServicoPayload {
   descricao: string;
   valor: number;
   dataAbertura: string;
+  clienteId?: string;
+  emailCliente?: string;
 }
 
 export interface UpdateOrdemServicoPayload {
@@ -333,6 +360,8 @@ export interface UpdateOrdemServicoPayload {
   descricao?: string;
   valor?: number;
   dataAbertura?: string;
+  clienteId?: string;
+  emailCliente?: string;
 }
 
 // ── Paginação ─────────────────────────────────────────

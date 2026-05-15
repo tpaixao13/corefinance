@@ -36,6 +36,7 @@ export enum AcaoAuditoria {
   EDICAO_OS = 'EDICAO_OS',
   FINALIZACAO_OS = 'FINALIZACAO_OS',
   CANCELAMENTO_OS = 'CANCELAMENTO_OS',
+  ENVIO_EMAIL_OS = 'ENVIO_EMAIL_OS',
 }
 
 @Entity('auditoria_log')

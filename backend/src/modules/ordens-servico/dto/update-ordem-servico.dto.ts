@@ -4,6 +4,8 @@ import {
   IsNumber,
   IsPositive,
   IsDateString,
+  IsEmail,
+  IsUUID,
   MaxLength,
 } from 'class-validator';
 
@@ -26,4 +28,13 @@ export class UpdateOrdemServicoDto {
   @IsOptional()
   @IsDateString()
   dataAbertura?: string;
+
+  @IsOptional()
+  @IsUUID()
+  clienteId?: string;
+
+  @IsOptional()
+  @IsEmail()
+  @MaxLength(200)
+  emailCliente?: string;
 }

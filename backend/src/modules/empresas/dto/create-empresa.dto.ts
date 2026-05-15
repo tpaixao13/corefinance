@@ -18,4 +18,9 @@ export class CreateEmpresaDto {
   @IsInt()
   @Min(1)
   maxUsuarios?: number;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(500)
+  logoUrl?: string;
 }
