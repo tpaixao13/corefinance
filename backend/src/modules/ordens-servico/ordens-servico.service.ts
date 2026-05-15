@@ -7,6 +7,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { OrdemServico, StatusOrdemServico } from './ordem-servico.entity';
+import { Cliente } from '../clientes/cliente.entity';
 import { CreateOrdemServicoDto } from './dto/create-ordem-servico.dto';
 import { UpdateOrdemServicoDto } from './dto/update-ordem-servico.dto';
 import { ContasReceberService } from '../contas-receber/contas-receber.service';
@@ -22,13 +23,29 @@ export class OrdensServicoService {
     private readonly repo: Repository<OrdemServico>,
     @InjectRepository(Empresa)
     private readonly empresaRepo: Repository<Empresa>,
+    @InjectRepository(Cliente)
+    private readonly clienteRepo: Repository<Cliente>,
     private readonly contasReceberService: ContasReceberService,
     private readonly auditoriaService: AuditoriaService,
     private readonly mailService: OsMailService,
   ) {}
 
+  private async resolveCliente(clienteId: string, empresaId: string): Promise<Cliente> {
+    const cliente = await this.clienteRepo.findOne({ where: { id: clienteId, empresaId } });
+    if (!cliente) throw new NotFoundException('Cliente não encontrado ou não pertence a esta empresa');
+    if (!cliente.ativo) throw new BadRequestException('Cliente inativo. Reative o cliente antes de criar a OS');
+    return cliente;
+  }
+
   async criar(dto: CreateOrdemServicoDto, empresaId: string, operadorId: string): Promise<OrdemServico> {
-    const os = this.repo.create({ ...dto, empresaId });
+    const cliente = await this.resolveCliente(dto.clienteId, empresaId);
+
+    const os = this.repo.create({
+      ...dto,
+      empresaId,
+      cliente: cliente.nome,
+      emailCliente: dto.emailCliente ?? cliente.email ?? null,
+    });
     const salva = await this.repo.save(os);
 
     this.auditoriaService.registrar({
@@ -37,7 +54,7 @@ export class OrdensServicoService {
       acao: AcaoAuditoria.CRIACAO_OS,
       entidade: 'ordem_servico',
       entidadeId: salva.id,
-      dadosDepois: { cliente: salva.cliente, descricao: salva.descricao, valor: salva.valor, status: salva.status },
+      dadosDepois: { clienteId: salva.clienteId, cliente: salva.cliente, descricao: salva.descricao, valor: salva.valor, status: salva.status },
     }).catch((err) => console.error('[auditoria] CRIACAO_OS falhou:', err));
 
     return salva;
@@ -66,8 +83,19 @@ export class OrdensServicoService {
       throw new ForbiddenException(`Ordem de serviço ${os.status.toLowerCase()} não pode ser editada`);
     }
 
-    const antes = { cliente: os.cliente, descricao: os.descricao, valor: os.valor, status: os.status };
-    Object.assign(os, dto);
+    const antes = { clienteId: os.clienteId, cliente: os.cliente, descricao: os.descricao, valor: os.valor };
+
+    if (dto.clienteId && dto.clienteId !== os.clienteId) {
+      const novoCliente = await this.resolveCliente(dto.clienteId, empresaId);
+      os.clienteId = novoCliente.id;
+      os.cliente = novoCliente.nome;
+      if (!dto.emailCliente) {
+        os.emailCliente = novoCliente.email ?? null;
+      }
+    }
+
+    const { clienteId: _drop, ...restoDto } = dto;
+    Object.assign(os, restoDto);
     const atualizada = await this.repo.save(os);
 
     this.auditoriaService.registrar({
@@ -77,7 +105,7 @@ export class OrdensServicoService {
       entidade: 'ordem_servico',
       entidadeId: atualizada.id,
       dadosAntes: antes,
-      dadosDepois: { cliente: atualizada.cliente, descricao: atualizada.descricao, valor: atualizada.valor, status: atualizada.status },
+      dadosDepois: { clienteId: atualizada.clienteId, cliente: atualizada.cliente, descricao: atualizada.descricao, valor: atualizada.valor },
     }).catch((err) => console.error('[auditoria] EDICAO_OS falhou:', err));
 
     return atualizada;
@@ -100,6 +128,7 @@ export class OrdensServicoService {
       {
         descricao: `OS #${os.id.slice(0, 8).toUpperCase()} — ${os.cliente}: ${os.descricao}`,
         cliente: os.cliente,
+        clienteId: os.clienteId ?? undefined,
         valor: Number(os.valor),
         dataRecebimento: dataConclusao,
       },

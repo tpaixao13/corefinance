@@ -358,20 +358,18 @@ export interface OrdemServico {
 }
 
 export interface CreateOrdemServicoPayload {
-  cliente: string;
+  clienteId: string;
   descricao: string;
   valor: number;
   dataAbertura: string;
-  clienteId?: string;
   emailCliente?: string;
 }
 
 export interface UpdateOrdemServicoPayload {
-  cliente?: string;
+  clienteId?: string;
   descricao?: string;
   valor?: number;
   dataAbertura?: string;
-  clienteId?: string;
   emailCliente?: string;
 }
 

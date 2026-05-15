@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { X, Save } from 'lucide-react';
+import { X, Save, AlertCircle } from 'lucide-react';
 import type { OrdemServico, Cliente, CreateOrdemServicoPayload, UpdateOrdemServicoPayload } from '../types';
 import ClienteAutocomplete from './ClienteAutocomplete';
 
@@ -17,8 +17,8 @@ export default function OrdemServicoForm({ os, onClose, onSave, isPending }: Pro
   const isEdit = !!os;
 
   const [clienteSelecionado, setClienteSelecionado] = useState<Cliente | null>(null);
+  const [clienteErro, setClienteErro] = useState(false);
   const [form, setForm] = useState({
-    cliente: '',
     descricao: '',
     valor: '',
     dataAbertura: hoje(),
@@ -28,12 +28,25 @@ export default function OrdemServicoForm({ os, onClose, onSave, isPending }: Pro
   useEffect(() => {
     if (os) {
       setForm({
-        cliente: os.cliente,
         descricao: os.descricao,
         valor: String(os.valor),
         dataAbertura: os.dataAbertura,
         emailCliente: os.emailCliente ?? '',
       });
+      // Reconstrói objeto mínimo do cliente para exibição no autocomplete
+      if (os.clienteId) {
+        setClienteSelecionado({
+          id: os.clienteId,
+          empresaId: os.empresaId,
+          nome: os.cliente,
+          cpfCnpj: null,
+          email: os.emailCliente,
+          telefone: null,
+          endereco: null,
+          ativo: true,
+          createdAt: '',
+        });
+      }
     }
   }, [os]);
 
@@ -43,26 +56,39 @@ export default function OrdemServicoForm({ os, onClose, onSave, isPending }: Pro
 
   function handleClienteChange(c: Cliente | null) {
     setClienteSelecionado(c);
-    if (c) {
-      setForm((f) => ({
-        ...f,
-        cliente: c.nome,
-        emailCliente: c.email ?? f.emailCliente,
-      }));
+    setClienteErro(false);
+    if (c?.email && !form.emailCliente) {
+      setForm((f) => ({ ...f, emailCliente: c.email ?? '' }));
     }
   }
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    const payload: CreateOrdemServicoPayload = {
-      cliente: form.cliente,
-      descricao: form.descricao,
-      valor: parseFloat(form.valor),
-      dataAbertura: form.dataAbertura,
-      clienteId: clienteSelecionado?.id,
-      emailCliente: form.emailCliente || undefined,
-    };
-    onSave(payload);
+
+    if (!clienteSelecionado) {
+      setClienteErro(true);
+      return;
+    }
+
+    if (isEdit) {
+      const payload: UpdateOrdemServicoPayload = {
+        clienteId: clienteSelecionado.id,
+        descricao: form.descricao,
+        valor: parseFloat(form.valor),
+        dataAbertura: form.dataAbertura,
+        emailCliente: form.emailCliente || undefined,
+      };
+      onSave(payload);
+    } else {
+      const payload: CreateOrdemServicoPayload = {
+        clienteId: clienteSelecionado.id,
+        descricao: form.descricao,
+        valor: parseFloat(form.valor),
+        dataAbertura: form.dataAbertura,
+        emailCliente: form.emailCliente || undefined,
+      };
+      onSave(payload);
+    }
   }
 
   return (
@@ -78,40 +104,36 @@ export default function OrdemServicoForm({ os, onClose, onSave, isPending }: Pro
         </div>
 
         <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4">
-          {/* Cliente com autocomplete */}
+          {/* Cliente — obrigatório via autocomplete */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1.5">
               Cliente <span className="text-red-500">*</span>
             </label>
             <ClienteAutocomplete value={clienteSelecionado} onChange={handleClienteChange} />
-            {/* fallback texto se nenhum cliente selecionado */}
-            {!clienteSelecionado && (
-              <input
-                type="text"
-                value={form.cliente}
-                onChange={(e) => set('cliente', e.target.value)}
-                required
-                maxLength={200}
-                placeholder="Ou digite o nome do cliente manualmente"
-                className={`${inputCls} mt-2`}
-              />
+            {clienteErro && (
+              <p className="flex items-center gap-1.5 mt-1.5 text-xs text-red-600">
+                <AlertCircle size={13} />
+                Selecione ou cadastre um cliente antes de continuar.
+              </p>
             )}
           </div>
 
           {/* E-mail do cliente */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1.5">
-              E-mail do cliente <span className="text-xs text-gray-400">(usado para envio por e-mail)</span>
+              E-mail do cliente{' '}
+              <span className="text-xs text-gray-400">(para envio por e-mail)</span>
             </label>
             <input
               type="email"
               value={form.emailCliente}
               onChange={(e) => set('emailCliente', e.target.value)}
-              placeholder="cliente@email.com (opcional)"
+              placeholder="Preenchido automaticamente do cadastro"
               className={inputCls}
             />
           </div>
 
+          {/* Descrição */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1.5">
               Descrição <span className="text-red-500">*</span>

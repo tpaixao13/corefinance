@@ -11,9 +11,8 @@ import {
 
 export class UpdateOrdemServicoDto {
   @IsOptional()
-  @IsString()
-  @MaxLength(200)
-  cliente?: string;
+  @IsUUID()
+  clienteId?: string;
 
   @IsOptional()
   @IsString()
@@ -28,10 +27,6 @@ export class UpdateOrdemServicoDto {
   @IsOptional()
   @IsDateString()
   dataAbertura?: string;
-
-  @IsOptional()
-  @IsUUID()
-  clienteId?: string;
 
   @IsOptional()
   @IsEmail()

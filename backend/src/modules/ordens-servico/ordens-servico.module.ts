@@ -8,10 +8,11 @@ import { ContasReceberModule } from '../contas-receber/contas-receber.module';
 import { PermissoesGuardModule } from '../../common/guards/permissoes-guard.module';
 import { AuditoriaModule } from '../auditoria/auditoria.module';
 import { Empresa } from '../empresas/empresa.entity';
+import { Cliente } from '../clientes/cliente.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([OrdemServico, Empresa]),
+    TypeOrmModule.forFeature([OrdemServico, Empresa, Cliente]),
     ContasReceberModule,
     PermissoesGuardModule,
     AuditoriaModule,

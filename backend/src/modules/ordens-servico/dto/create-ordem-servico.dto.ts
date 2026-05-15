@@ -11,10 +11,9 @@ import {
 } from 'class-validator';
 
 export class CreateOrdemServicoDto {
-  @IsString()
+  @IsUUID()
   @IsNotEmpty()
-  @MaxLength(200)
-  cliente: string;
+  clienteId: string;
 
   @IsString()
   @IsNotEmpty()
@@ -27,10 +26,6 @@ export class CreateOrdemServicoDto {
 
   @IsDateString()
   dataAbertura: string;
-
-  @IsOptional()
-  @IsUUID()
-  clienteId?: string;
 
   @IsOptional()
   @IsEmail()
