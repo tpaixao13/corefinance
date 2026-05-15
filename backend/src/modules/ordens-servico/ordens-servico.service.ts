@@ -61,12 +61,6 @@ export class OrdensServicoService {
       throw new ForbiddenException(`Ordem de serviço ${os.status.toLowerCase()} não pode ser editada`);
     }
 
-    if (dto.valor !== undefined && dto.valor !== Number(os.valor)) {
-      if (os.status === StatusOrdemServico.CONCLUIDA) {
-        throw new ForbiddenException('Valor não pode ser alterado após conclusão');
-      }
-    }
-
     const antes = { cliente: os.cliente, descricao: os.descricao, valor: os.valor, status: os.status };
     Object.assign(os, dto);
     const atualizada = await this.repo.save(os);
