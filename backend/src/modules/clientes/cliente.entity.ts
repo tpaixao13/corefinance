@@ -24,16 +24,16 @@ export class Cliente {
   @Column({ length: 200 })
   nome: string;
 
-  @Column({ name: 'cpf_cnpj', length: 18, nullable: true })
+  @Column({ name: 'cpf_cnpj', type: 'varchar', length: 18, nullable: true })
   cpfCnpj: string | null;
 
-  @Column({ length: 200, nullable: true })
+  @Column({ type: 'varchar', length: 200, nullable: true })
   email: string | null;
 
-  @Column({ length: 20, nullable: true })
+  @Column({ type: 'varchar', length: 20, nullable: true })
   telefone: string | null;
 
-  @Column({ length: 300, nullable: true })
+  @Column({ type: 'varchar', length: 300, nullable: true })
   endereco: string | null;
 
   @Column({ default: true })
