@@ -14,6 +14,7 @@ import { ContasPagarModule } from './modules/contas-pagar/contas-pagar.module';
 import { ContasReceberModule } from './modules/contas-receber/contas-receber.module';
 import { EnderecosModule } from './modules/enderecos/enderecos.module';
 import { RelatoriosModule } from './modules/relatorios/relatorios.module';
+import { OrdensServicoModule } from './modules/ordens-servico/ordens-servico.module';
 
 @Module({
   imports: [
@@ -53,6 +54,7 @@ import { RelatoriosModule } from './modules/relatorios/relatorios.module';
     ContasReceberModule,
     EnderecosModule,
     RelatoriosModule,
+    OrdensServicoModule,
   ],
 })
 export class AppModule {}

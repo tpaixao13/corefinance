@@ -14,6 +14,10 @@ const ACAO_LABEL: Record<AcaoAuditoria, string> = {
   ESTORNO_CONCILIACAO: 'Estorno de Conciliação',
   ALTERACAO_LICENCA: 'Alteração de Licença',
   TENTATIVA_LIMITE_USUARIOS: 'Tentativa: Limite de Usuários',
+  CRIACAO_OS: 'Criação de OS',
+  EDICAO_OS: 'Edição de OS',
+  FINALIZACAO_OS: 'Finalização de OS',
+  CANCELAMENTO_OS: 'Cancelamento de OS',
 };
 
 const ACAO_COR: Record<AcaoAuditoria, string> = {
@@ -30,6 +34,10 @@ const ACAO_COR: Record<AcaoAuditoria, string> = {
   ESTORNO_CONCILIACAO: 'bg-red-100 text-red-700',
   ALTERACAO_LICENCA: 'bg-violet-100 text-violet-700',
   TENTATIVA_LIMITE_USUARIOS: 'bg-red-100 text-red-700',
+  CRIACAO_OS: 'bg-cyan-100 text-cyan-700',
+  EDICAO_OS: 'bg-sky-100 text-sky-700',
+  FINALIZACAO_OS: 'bg-green-100 text-green-700',
+  CANCELAMENTO_OS: 'bg-gray-100 text-gray-500',
 };
 
 function formatarData(iso: string) {

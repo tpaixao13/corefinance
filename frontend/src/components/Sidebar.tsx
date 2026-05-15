@@ -15,6 +15,7 @@ import {
   FileText,
   Download,
   LogOut,
+  ClipboardList,
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { usePermissoesCtx } from '../contexts/PermissoesContext';
@@ -56,6 +57,10 @@ export default function Sidebar() {
 
         {temPermissao('CONTAS_RECEBER_VIEW') && (
           <NavLink to="/contas-receber" className={navCls}><TrendingUp size={18} />Contas a Receber</NavLink>
+        )}
+
+        {temPermissao('ORDEM_SERVICO_VIEW') && (
+          <NavLink to="/ordens-servico" className={navCls}><ClipboardList size={18} />Ordens de Serviço</NavLink>
         )}
 
         {(user?.role === 'SUPER_ADMIN' || user?.role === 'ADMIN_EMPRESA') && temPermissao('CONCILIACAO_EXECUTAR') && (

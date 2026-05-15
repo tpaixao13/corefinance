@@ -217,7 +217,11 @@ export type AcaoAuditoria =
   | 'LOGIN'
   | 'ESTORNO_CONCILIACAO'
   | 'ALTERACAO_LICENCA'
-  | 'TENTATIVA_LIMITE_USUARIOS';
+  | 'TENTATIVA_LIMITE_USUARIOS'
+  | 'CRIACAO_OS'
+  | 'EDICAO_OS'
+  | 'FINALIZACAO_OS'
+  | 'CANCELAMENTO_OS';
 
 export interface AuditoriaLog {
   id: string;
@@ -298,6 +302,37 @@ export interface UpdateContaReceberPayload {
   dataRecebimento?: string;
   recorrencia?: RecorrenciaContaPagar;
   status?: StatusContaReceber;
+}
+
+// ── Ordens de Serviço ─────────────────────────────────
+export type StatusOrdemServico = 'ABERTA' | 'EM_ANDAMENTO' | 'CONCLUIDA' | 'CANCELADA';
+
+export interface OrdemServico {
+  id: string;
+  empresaId: string;
+  cliente: string;
+  descricao: string;
+  valor: number;
+  status: StatusOrdemServico;
+  dataAbertura: string;
+  dataConclusao: string | null;
+  contaReceberId: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateOrdemServicoPayload {
+  cliente: string;
+  descricao: string;
+  valor: number;
+  dataAbertura: string;
+}
+
+export interface UpdateOrdemServicoPayload {
+  cliente?: string;
+  descricao?: string;
+  valor?: number;
+  dataAbertura?: string;
 }
 
 // ── Paginação ─────────────────────────────────────────

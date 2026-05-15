@@ -21,6 +21,7 @@ import RelatorioFinanceiro from '../pages/RelatorioFinanceiro';
 import Exportacao from '../pages/Exportacao';
 import EsqueciSenha from '../pages/EsqueciSenha';
 import ResetSenha from '../pages/ResetSenha';
+import OrdensServico from '../pages/OrdensServico';
 
 function PrivateRoute() {
   const { isAuthenticated } = useAuth();
@@ -64,6 +65,7 @@ export default function AppRoutes() {
             <Route path="/dre" element={<Dre />} />
             <Route path="/relatorio-financeiro" element={<RelatorioFinanceiro />} />
             <Route path="/exportacao" element={<Exportacao />} />
+            <Route path="/ordens-servico" element={<OrdensServico />} />
           </Route>
         </Route>
 

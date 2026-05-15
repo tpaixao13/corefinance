@@ -18,6 +18,12 @@ const ACOES: { value: AcaoAuditoria | ''; label: string }[] = [
   { value: 'CRIACAO_USUARIO', label: 'Criação de Usuário' },
   { value: 'CRIACAO_EMPRESA', label: 'Criação de Empresa' },
   { value: 'ATUALIZACAO_EMPRESA', label: 'Atualização de Empresa' },
+  { value: 'ALTERACAO_LICENCA', label: 'Alteração de Licença' },
+  { value: 'TENTATIVA_LIMITE_USUARIOS', label: 'Tentativa: Limite de Usuários' },
+  { value: 'CRIACAO_OS', label: 'Criação de OS' },
+  { value: 'EDICAO_OS', label: 'Edição de OS' },
+  { value: 'FINALIZACAO_OS', label: 'Finalização de OS' },
+  { value: 'CANCELAMENTO_OS', label: 'Cancelamento de OS' },
 ];
 
 const LIMIT = 50;
