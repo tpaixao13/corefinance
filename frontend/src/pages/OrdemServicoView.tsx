@@ -28,7 +28,11 @@ export default function OrdemServicoView() {
   const [emailSucesso, setEmailSucesso] = useState(false);
 
   function handleImprimir() {
+    const titulo = `OS-${String(os?.numero).padStart(6, '0')}`;
+    const original = document.title;
+    document.title = titulo;
     window.print();
+    document.title = original;
   }
 
   function handleEnviarEmail(e: React.FormEvent) {
@@ -55,13 +59,21 @@ export default function OrdemServicoView() {
 
   return (
     <>
-      {/* Estilo de impressão — oculta tudo exceto o documento */}
+      {/* Estilo de impressão */}
       <style>{`
         @media print {
-          body > * { display: none !important; }
-          .print-root { display: block !important; }
-          .print-root .no-print { display: none !important; }
-          .os-documento { border: none !important; }
+          body * { visibility: hidden; }
+          .os-documento,
+          .os-documento * { visibility: visible; }
+          .os-documento {
+            position: fixed !important;
+            inset: 0 !important;
+            width: 100% !important;
+            margin: 0 !important;
+            border: none !important;
+            border-radius: 0 !important;
+            box-shadow: none !important;
+          }
         }
       `}</style>
 
