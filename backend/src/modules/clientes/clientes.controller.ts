@@ -3,6 +3,7 @@ import {
   Get,
   Post,
   Put,
+  Patch,
   Param,
   Body,
   Query,
@@ -16,9 +17,12 @@ import {
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { TenantGuard } from '../../common/guards/tenant.guard';
+import { PermissaoGuard } from '../../common/guards/permissao.guard';
+import { RequerPermissao } from '../../common/decorators/requer-permissao.decorator';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import { Role } from '../usuarios/usuario.entity';
+import { ChavePermissao } from '../usuarios/usuario-permissao.entity';
 import { ClientesService } from './clientes.service';
 import { CreateClienteDto } from './dto/create-cliente.dto';
 import { UpdateClienteDto } from './dto/update-cliente.dto';
@@ -37,7 +41,8 @@ export class ClientesController {
   }
 
   @Post()
-  @Roles(Role.SUPER_ADMIN, Role.ADMIN_EMPRESA)
+  @UseGuards(PermissaoGuard)
+  @RequerPermissao(ChavePermissao.CLIENTE_CREATE)
   criar(
     @Body() dto: CreateClienteDto,
     @CurrentUser() user: { role: Role; empresaId: string },
@@ -56,16 +61,26 @@ export class ClientesController {
   }
 
   @Get()
+  @UseGuards(PermissaoGuard)
+  @RequerPermissao(ChavePermissao.CLIENTE_VIEW)
   listar(
     @CurrentUser() user: { role: Role; empresaId: string },
     @Headers('x-empresa-id') header: string,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(50), ParseIntPipe) limit: number,
+    @Query('todos') todos: string,
   ) {
-    return this.service.listar(this.resolveEmpresaId(user, header), page, limit);
+    return this.service.listar(
+      this.resolveEmpresaId(user, header),
+      page,
+      limit,
+      todos === 'true',
+    );
   }
 
   @Get(':id')
+  @UseGuards(PermissaoGuard)
+  @RequerPermissao(ChavePermissao.CLIENTE_VIEW)
   buscarPorId(
     @Param('id', ParseUUIDPipe) id: string,
     @CurrentUser() user: { role: Role; empresaId: string },
@@ -75,7 +90,8 @@ export class ClientesController {
   }
 
   @Put(':id')
-  @Roles(Role.SUPER_ADMIN, Role.ADMIN_EMPRESA)
+  @UseGuards(PermissaoGuard)
+  @RequerPermissao(ChavePermissao.CLIENTE_EDIT)
   atualizar(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateClienteDto,
@@ -83,5 +99,16 @@ export class ClientesController {
     @Headers('x-empresa-id') header: string,
   ) {
     return this.service.atualizar(id, dto, this.resolveEmpresaId(user, header));
+  }
+
+  @Patch(':id/inativar')
+  @UseGuards(PermissaoGuard)
+  @RequerPermissao(ChavePermissao.CLIENTE_INATIVAR)
+  inativar(
+    @Param('id', ParseUUIDPipe) id: string,
+    @CurrentUser() user: { role: Role; empresaId: string },
+    @Headers('x-empresa-id') header: string,
+  ) {
+    return this.service.inativar(id, this.resolveEmpresaId(user, header));
   }
 }

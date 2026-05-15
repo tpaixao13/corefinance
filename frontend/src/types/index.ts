@@ -282,6 +282,7 @@ export interface ContaReceber {
   empresaId: string;
   descricao: string;
   cliente: string | null;
+  clienteId: string | null;
   valor: number;
   dataRecebimento: string;
   recorrencia: RecorrenciaContaPagar;
@@ -293,6 +294,7 @@ export interface ContaReceber {
 export interface CreateContaReceberPayload {
   descricao: string;
   cliente?: string;
+  clienteId?: string;
   valor: number;
   dataRecebimento: string;
   recorrencia: RecorrenciaContaPagar;
@@ -322,6 +324,14 @@ export interface Cliente {
 
 export interface CreateClientePayload {
   nome: string;
+  cpfCnpj?: string;
+  email?: string;
+  telefone?: string;
+  endereco?: string;
+}
+
+export interface UpdateClientePayload {
+  nome?: string;
   cpfCnpj?: string;
   email?: string;
   telefone?: string;

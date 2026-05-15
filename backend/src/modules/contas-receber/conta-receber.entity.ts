@@ -54,6 +54,9 @@ export class ContaReceber {
   })
   status: StatusContaReceber;
 
+  @Column({ name: 'cliente_id', type: 'uuid', nullable: true })
+  clienteId: string | null;
+
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 

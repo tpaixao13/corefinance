@@ -16,19 +16,64 @@ import {
   Download,
   LogOut,
   ClipboardList,
+  UserRound,
+  ChevronDown,
 } from 'lucide-react';
+import { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { usePermissoesCtx } from '../contexts/PermissoesContext';
-
 
 const navCls = ({ isActive }: { isActive: boolean }) =>
   `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
     isActive ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white'
   }`;
 
+const subNavCls = ({ isActive }: { isActive: boolean }) =>
+  `flex items-center gap-3 pl-7 pr-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+    isActive ? 'bg-blue-600 text-white' : 'text-slate-400 hover:bg-slate-800 hover:text-white'
+  }`;
+
+function GroupLabel({ label, open, onToggle }: { label: string; open: boolean; onToggle: () => void }) {
+  return (
+    <button
+      onClick={onToggle}
+      className="w-full flex items-center justify-between px-3 py-1.5 text-xs font-semibold text-slate-500 uppercase tracking-wider hover:text-slate-300 transition-colors"
+    >
+      {label}
+      <ChevronDown
+        size={13}
+        className={`transition-transform duration-200 ${open ? 'rotate-0' : '-rotate-90'}`}
+      />
+    </button>
+  );
+}
+
 export default function Sidebar() {
   const { user, logout } = useAuth();
   const { temPermissao } = usePermissoesCtx();
+
+  const [openCadastros, setOpenCadastros] = useState(true);
+  const [openFinanceiro, setOpenFinanceiro] = useState(true);
+  const [openOperacional, setOpenOperacional] = useState(true);
+  const [openAdmin, setOpenAdmin] = useState(true);
+
+  const isAdmin = user?.role === 'SUPER_ADMIN' || user?.role === 'ADMIN_EMPRESA';
+  const isSuperAdmin = user?.role === 'SUPER_ADMIN';
+
+  const temCadastros =
+    isSuperAdmin ||
+    temPermissao('CLIENTE_VIEW') ||
+    temPermissao('CONTA_BANCARIA_VIEW');
+
+  const temFinanceiro =
+    temPermissao('CONTAS_PAGAR_VIEW') ||
+    temPermissao('CONTAS_RECEBER_VIEW') ||
+    temPermissao('CONCILIACAO_EXECUTAR') ||
+    temPermissao('EXTRATO_IMPORT');
+
+  const temOperacional = temPermissao('ORDEM_SERVICO_VIEW');
+
+  const temAdminArea = isAdmin && (temPermissao('AUDITORIA_VIEW') || isSuperAdmin);
 
   return (
     <aside className="w-64 text-white flex flex-col min-h-screen" style={{ backgroundColor: '#0B2A4A' }}>
@@ -37,67 +82,141 @@ export default function Sidebar() {
         <img src="/logo.png?v=4" alt="TDGenFin" className="w-auto object-contain brightness-0 invert" style={{ height: '90px' }} />
       </div>
 
-      {/* Navegação */}
-      <nav className="flex-1 px-3 py-4 space-y-1">
+      <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+        {/* Dashboard */}
         {temPermissao('DASHBOARD_VIEW') && (
-          <NavLink to="/" end className={navCls}><LayoutDashboard size={18} />Dashboard</NavLink>
+          <NavLink to="/" end className={navCls}>
+            <LayoutDashboard size={18} />Dashboard
+          </NavLink>
         )}
 
-        <NavLink to="/contas" className={navCls}><Landmark size={18} />Contas</NavLink>
+        <div className="pt-2" />
 
-        {temPermissao('EXTRATO_IMPORT') && (
-          <NavLink to="/importar" className={navCls}><Upload size={18} />Importar Extrato</NavLink>
+        {/* ── Cadastros ── */}
+        {temCadastros && (
+          <>
+            <GroupLabel label="Cadastros" open={openCadastros} onToggle={() => setOpenCadastros((v) => !v)} />
+            {openCadastros && (
+              <div className="space-y-0.5">
+                {isSuperAdmin && (
+                  <NavLink to="/empresas" className={subNavCls}>
+                    <Building2 size={16} />Empresas
+                  </NavLink>
+                )}
+                {isAdmin && (
+                  <NavLink to="/usuarios" className={subNavCls}>
+                    <Users size={16} />Usuários
+                  </NavLink>
+                )}
+                {temPermissao('CONTA_BANCARIA_VIEW') && (
+                  <NavLink to="/contas" className={subNavCls}>
+                    <Landmark size={16} />Contas Bancárias
+                  </NavLink>
+                )}
+                {temPermissao('CLIENTE_VIEW') && (
+                  <NavLink to="/clientes" className={subNavCls}>
+                    <UserRound size={16} />Clientes
+                  </NavLink>
+                )}
+              </div>
+            )}
+          </>
         )}
 
-        <NavLink to="/despesas" className={navCls}><TrendingDown size={18} />Despesas</NavLink>
+        <div className="pt-2" />
 
-        {temPermissao('CONTAS_PAGAR_VIEW') && (
-          <NavLink to="/contas-pagar" className={navCls}><Receipt size={18} />Contas a Pagar</NavLink>
+        {/* ── Financeiro ── */}
+        {temFinanceiro && (
+          <>
+            <GroupLabel label="Financeiro" open={openFinanceiro} onToggle={() => setOpenFinanceiro((v) => !v)} />
+            {openFinanceiro && (
+              <div className="space-y-0.5">
+                {temPermissao('CONTAS_PAGAR_VIEW') && (
+                  <NavLink to="/contas-pagar" className={subNavCls}>
+                    <Receipt size={16} />Contas a Pagar
+                  </NavLink>
+                )}
+                {temPermissao('CONTAS_RECEBER_VIEW') && (
+                  <NavLink to="/contas-receber" className={subNavCls}>
+                    <TrendingUp size={16} />Contas a Receber
+                  </NavLink>
+                )}
+                {temPermissao('EXTRATO_IMPORT') && (
+                  <NavLink to="/importar" className={subNavCls}>
+                    <Upload size={16} />Importar Extrato
+                  </NavLink>
+                )}
+                {temPermissao('CONCILIACAO_EXECUTAR') && (
+                  <NavLink to="/conciliacao" className={subNavCls}>
+                    <GitMerge size={16} />Conciliação
+                  </NavLink>
+                )}
+                <NavLink to="/despesas" className={subNavCls}>
+                  <TrendingDown size={16} />Despesas
+                </NavLink>
+                <NavLink to="/dre" className={subNavCls}>
+                  <TrendingUp size={16} />DRE
+                </NavLink>
+                <NavLink to="/relatorio-financeiro" className={subNavCls}>
+                  <FileText size={16} />Rel. Financeiro
+                </NavLink>
+                {isAdmin && (
+                  <NavLink to="/exportacao" className={subNavCls}>
+                    <Download size={16} />Exportação
+                  </NavLink>
+                )}
+              </div>
+            )}
+          </>
         )}
 
-        {temPermissao('CONTAS_RECEBER_VIEW') && (
-          <NavLink to="/contas-receber" className={navCls}><TrendingUp size={18} />Contas a Receber</NavLink>
+        <div className="pt-2" />
+
+        {/* ── Operacional ── */}
+        {temOperacional && (
+          <>
+            <GroupLabel label="Operacional" open={openOperacional} onToggle={() => setOpenOperacional((v) => !v)} />
+            {openOperacional && (
+              <div className="space-y-0.5">
+                <NavLink to="/ordens-servico" className={subNavCls}>
+                  <ClipboardList size={16} />Ordens de Serviço
+                </NavLink>
+              </div>
+            )}
+          </>
         )}
 
-        {temPermissao('ORDEM_SERVICO_VIEW') && (
-          <NavLink to="/ordens-servico" className={navCls}><ClipboardList size={18} />Ordens de Serviço</NavLink>
-        )}
+        <div className="pt-2" />
 
-        {(user?.role === 'SUPER_ADMIN' || user?.role === 'ADMIN_EMPRESA') && temPermissao('CONCILIACAO_EXECUTAR') && (
-          <NavLink to="/conciliacao" className={navCls}><GitMerge size={18} />Conciliação</NavLink>
-        )}
-
-        {(user?.role === 'SUPER_ADMIN' || user?.role === 'ADMIN_EMPRESA') && (
-          <NavLink to="/usuarios" className={navCls}><Users size={18} />Usuários</NavLink>
-        )}
-
-        {(user?.role === 'SUPER_ADMIN' || user?.role === 'ADMIN_EMPRESA') && temPermissao('AUDITORIA_VIEW') && (
-          <NavLink to="/auditoria" className={navCls}><Shield size={18} />Auditoria</NavLink>
-        )}
-
-        {user?.role === 'SUPER_ADMIN' && (
-          <NavLink to="/permissoes" className={navCls}><ShieldCheck size={18} />Permissões</NavLink>
-        )}
-
-        <NavLink to="/dre" className={navCls}><TrendingUp size={18} />DRE</NavLink>
-
-        <NavLink to="/relatorio-financeiro" className={navCls}><FileText size={18} />Rel. Financeiro</NavLink>
-
-        {(user?.role === 'SUPER_ADMIN' || user?.role === 'ADMIN_EMPRESA') && (
-          <NavLink to="/exportacao" className={navCls}><Download size={18} />Exportação</NavLink>
-        )}
-
-        {user?.role === 'SUPER_ADMIN' && (
-          <NavLink to="/relatorios" className={navCls}><BarChart2 size={18} />Permissões (Rel.)</NavLink>
-        )}
-
-        {user?.role === 'SUPER_ADMIN' && (
-          <NavLink to="/empresas" className={navCls}><Building2 size={18} />Empresas</NavLink>
+        {/* ── Administração ── */}
+        {temAdminArea && (
+          <>
+            <GroupLabel label="Administração" open={openAdmin} onToggle={() => setOpenAdmin((v) => !v)} />
+            {openAdmin && (
+              <div className="space-y-0.5">
+                {temPermissao('AUDITORIA_VIEW') && (
+                  <NavLink to="/auditoria" className={subNavCls}>
+                    <Shield size={16} />Auditoria
+                  </NavLink>
+                )}
+                {isSuperAdmin && (
+                  <NavLink to="/permissoes" className={subNavCls}>
+                    <ShieldCheck size={16} />Permissões
+                  </NavLink>
+                )}
+                {isSuperAdmin && (
+                  <NavLink to="/relatorios" className={subNavCls}>
+                    <BarChart2 size={16} />Relatórios (Admin)
+                  </NavLink>
+                )}
+              </div>
+            )}
+          </>
         )}
       </nav>
 
-      {/* Rodapé com usuário */}
-      <div className="px-3 py-4 border-t border-slate-700">
+      {/* Rodapé */}
+      <div className="px-3 py-4 border-t border-slate-700 shrink-0">
         <div className="px-3 py-2 mb-2">
           <p className="text-sm font-medium text-white truncate">{user?.nome}</p>
           <p className="text-xs text-slate-400 truncate">{user?.email}</p>

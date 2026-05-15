@@ -31,4 +31,8 @@ export class CreateContaReceberDto {
   @IsOptional()
   @IsEnum(RecorrenciaContaPagar)
   recorrencia?: RecorrenciaContaPagar;
+
+  @IsOptional()
+  @IsString()
+  clienteId?: string;
 }

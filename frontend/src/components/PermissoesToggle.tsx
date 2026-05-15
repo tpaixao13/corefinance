@@ -9,6 +9,7 @@ const GRUPOS: { label: string; chaves: string[] }[] = [
   { label: 'Contas a Pagar', chaves: ['CONTAS_PAGAR_VIEW', 'CONTAS_PAGAR_CREATE', 'CONTAS_PAGAR_EDIT'] },
   { label: 'Contas a Receber', chaves: ['CONTAS_RECEBER_VIEW', 'CONTAS_RECEBER_CREATE', 'CONTAS_RECEBER_EDIT'] },
   { label: 'Ordens de Serviço', chaves: ['ORDEM_SERVICO_VIEW', 'ORDEM_SERVICO_CREATE', 'ORDEM_SERVICO_EDIT', 'ORDEM_SERVICO_FINALIZAR', 'ORDEM_SERVICO_ENVIAR_EMAIL', 'ORDEM_SERVICO_IMPRIMIR'] },
+  { label: 'Clientes', chaves: ['CLIENTE_VIEW', 'CLIENTE_CREATE', 'CLIENTE_EDIT', 'CLIENTE_INATIVAR'] },
 ];
 
 interface Props {
