@@ -48,6 +48,7 @@ export default function ConciliacaoTable({ pendentes, contaId, banco, canVincula
               <th className="pb-3 pr-4">Conta</th>
               <th className="pb-3 pr-4">Tipo</th>
               <th className="pb-3 pr-4 text-right">Valor</th>
+              <th className="pb-3 pr-4">Situação</th>
               <th className="pb-3 pr-4">Observação</th>
               <th className="pb-3">Ações</th>
             </tr>
@@ -56,7 +57,7 @@ export default function ConciliacaoTable({ pendentes, contaId, banco, canVincula
             {pendentes.map((l) => {
               const conciliando = isPending && variables?.lancamentoExtratoId === l.id;
               return (
-                <tr key={l.id} className="hover:bg-gray-50 transition-colors">
+                <tr key={l.id} className={`transition-colors ${l.statusConciliacao === 'NAO_ENCONTRADO' ? 'bg-orange-50 hover:bg-orange-100' : 'hover:bg-gray-50'}`}>
                   <td className="py-3 pr-4 text-gray-500 whitespace-nowrap">
                     {formatarData(l.data)}
                   </td>
@@ -77,6 +78,17 @@ export default function ConciliacaoTable({ pendentes, contaId, banco, canVincula
                     l.tipo === 'DEBITO' ? 'text-red-600' : 'text-green-600'
                   }`}>
                     {l.tipo === 'DEBITO' ? '−' : '+'}{brl(l.valor)}
+                  </td>
+                  <td className="py-3 pr-4">
+                    {l.statusConciliacao === 'NAO_ENCONTRADO' ? (
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-700">
+                        Não encontrado
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-700">
+                        Pendente
+                      </span>
+                    )}
                   </td>
                   <td className="py-3 pr-4">
                     <input

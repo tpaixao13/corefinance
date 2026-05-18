@@ -38,7 +38,7 @@ export default function Conciliacao() {
   const contaAtiva = contas?.find((c) => c.id === filtros.contaId);
 
   const pendentes = (data?.data ?? []).filter((l) => {
-    if (l.statusConciliacao !== 'PENDENTE') return false;
+    if (l.statusConciliacao === 'CONCILIADO') return false;
     if (filtros.tipo && l.tipo !== filtros.tipo) return false;
     if (filtros.dataInicio && l.data < filtros.dataInicio) return false;
     if (filtros.dataFim && l.data > filtros.dataFim) return false;
@@ -53,9 +53,14 @@ export default function Conciliacao() {
         <div className="flex items-center gap-3">
           <GitMerge size={22} className="text-blue-600" />
           <h2 className="text-2xl font-bold text-gray-800">Conciliação</h2>
-          {pendentes.length > 0 && (
+          {pendentes.filter(l => l.statusConciliacao === 'PENDENTE').length > 0 && (
             <span className="bg-yellow-100 text-yellow-700 text-xs font-semibold px-2.5 py-0.5 rounded-full">
-              {pendentes.length} pendentes
+              {pendentes.filter(l => l.statusConciliacao === 'PENDENTE').length} pendentes
+            </span>
+          )}
+          {pendentes.filter(l => l.statusConciliacao === 'NAO_ENCONTRADO').length > 0 && (
+            <span className="bg-orange-100 text-orange-700 text-xs font-semibold px-2.5 py-0.5 rounded-full">
+              {pendentes.filter(l => l.statusConciliacao === 'NAO_ENCONTRADO').length} não encontrados
             </span>
           )}
         </div>
@@ -63,7 +68,7 @@ export default function Conciliacao() {
         {filtros.contaId && (
           <ConciliacaoActions
             contaId={filtros.contaId}
-            totalPendentes={pendentes.length}
+            totalPendentes={pendentes.filter(l => l.statusConciliacao === 'PENDENTE').length}
           />
         )}
       </div>
