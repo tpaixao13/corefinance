@@ -20,17 +20,15 @@ export function useConciliarManual(contaId: string) {
       qc.invalidateQueries({ queryKey: ['conciliacao', 'pendentes', contaId] });
       qc.invalidateQueries({ queryKey: ['dashboard'] });
       qc.invalidateQueries({ queryKey: ['despesas'] });
+      qc.invalidateQueries({ queryKey: ['dre'] });
+      qc.invalidateQueries({ queryKey: ['relatorio-financeiro'] });
     },
   });
 }
 
 export function usePreviewAutomatica(contaId: string) {
-  const qc = useQueryClient();
   return useMutation({
     mutationFn: () => conciliacaoApi.previewAutomatica(contaId),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['conciliacao', 'pendentes', contaId] });
-    },
   });
 }
 
@@ -45,6 +43,8 @@ export function useConfirmarAutomatica(contaId: string) {
       qc.invalidateQueries({ queryKey: ['despesas'] });
       qc.invalidateQueries({ queryKey: ['contas-pagar'] });
       qc.invalidateQueries({ queryKey: ['contas-receber'] });
+      qc.invalidateQueries({ queryKey: ['dre'] });
+      qc.invalidateQueries({ queryKey: ['relatorio-financeiro'] });
     },
   });
 }
