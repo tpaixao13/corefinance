@@ -110,16 +110,19 @@ export const menuGroups: MenuGroup[] = [
         label: 'Despesas',
         path: '/despesas',
         icon: TrendingDown,
+        roles: ['SUPER_ADMIN', 'ADMIN_EMPRESA'],
       },
       {
         label: 'DRE',
         path: '/dre',
         icon: TrendingUp,
+        roles: ['SUPER_ADMIN', 'ADMIN_EMPRESA'],
       },
       {
         label: 'Rel. Financeiro',
         path: '/relatorio-financeiro',
         icon: FileText,
+        roles: ['SUPER_ADMIN', 'ADMIN_EMPRESA'],
       },
       {
         label: 'Exportação',

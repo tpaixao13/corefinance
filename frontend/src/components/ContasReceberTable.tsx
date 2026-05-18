@@ -1,7 +1,9 @@
 import { Pencil } from 'lucide-react';
 import type { ContaReceber, StatusContaReceber } from '../types';
 
-const STATUS_CONFIG: Record<StatusContaReceber, { label: string; className: string }> = {
+type StatusDisplay = StatusContaReceber | 'ATRASADA';
+
+const STATUS_CONFIG: Record<StatusDisplay, { label: string; className: string }> = {
   ABERTA:    { label: 'Aberta',    className: 'bg-blue-100 text-blue-700' },
   RECEBIDA:  { label: 'Recebida',  className: 'bg-green-100 text-green-700' },
   ATRASADA:  { label: 'Atrasada',  className: 'bg-red-100 text-red-700' },
@@ -14,7 +16,7 @@ const brl = (v: number) =>
 const fmtDate = (iso: string) =>
   new Date(iso + 'T00:00:00').toLocaleDateString('pt-BR');
 
-function resolveStatus(conta: ContaReceber): StatusContaReceber {
+function resolveStatus(conta: ContaReceber): StatusDisplay {
   if (conta.status !== 'ABERTA') return conta.status;
   if (conta.dataRecebimento < new Date().toISOString().slice(0, 10)) return 'ATRASADA';
   return 'ABERTA';

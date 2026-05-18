@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
+import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
 
 const WEAK_SECRET = 'tdgenfin-super-secret-jwt-2024-change-me';
 
@@ -32,6 +33,8 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   app.setGlobalPrefix('api/v1');
+
+  app.useGlobalFilters(new GlobalExceptionFilter());
 
   app.useGlobalPipes(
     new ValidationPipe({

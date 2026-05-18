@@ -1,10 +1,7 @@
-import { IsNotEmpty, IsNumber, IsOptional, IsString, IsUUID, MaxLength, Min } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsString, MaxLength } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class CreateContaBancariaDto {
-  @IsUUID()
-  empresaId: string;
-
   @IsString()
   @IsNotEmpty()
   @MaxLength(100)

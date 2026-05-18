@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { X, AlertTriangle } from 'lucide-react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { contasApi } from '../api/contas';
-import { useEmpresa } from '../contexts/EmpresaContext';
 import type { ContaBancaria } from '../types';
 
 interface Props {
@@ -21,7 +20,6 @@ interface FormState {
 const VAZIO: FormState = { banco: '', agencia: '', numero: '', descricao: '', saldoInicial: 0 };
 
 export default function ContaBancariaForm({ editTarget, onClose }: Props) {
-  const { empresaAtiva } = useEmpresa();
   const queryClient = useQueryClient();
   const [form, setForm] = useState<FormState>(VAZIO);
   const isEditing = !!editTarget;
@@ -42,7 +40,6 @@ export default function ContaBancariaForm({ editTarget, onClose }: Props) {
   const { mutate: criar, isPending: criando, error: erroCriar } = useMutation({
     mutationFn: () =>
       contasApi.criar({
-        empresaId: empresaAtiva!.id,
         banco: form.banco,
         agencia: form.agencia,
         numero: form.numero,

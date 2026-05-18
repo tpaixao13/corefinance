@@ -26,11 +26,11 @@ export default function VincularErpModal({ lancamento, contaId, onClose }: Props
   const { mutate: vincular, isPending } = useVincularErp(contaId);
 
   const contasPagar = (pagarData?.data ?? []).filter(
-    (c) => c.status === 'ABERTA' || c.status === 'ATRASADA',
+    (c) => c.status === 'ABERTA',
   ) as ContaPagar[];
 
   const contasReceber = (receberData?.data ?? []).filter(
-    (c) => c.status === 'ABERTA' || c.status === 'ATRASADA',
+    (c) => c.status === 'ABERTA',
   ) as ContaReceber[];
 
   const opcoes = isPagar ? contasPagar : contasReceber;

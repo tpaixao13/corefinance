@@ -13,13 +13,22 @@ const ACOES: { value: AcaoAuditoria | ''; label: string }[] = [
   { value: 'CONCILIACAO_MANUAL', label: 'Conciliação Manual' },
   { value: 'ESTORNO_CONCILIACAO', label: 'Estorno de Conciliação' },
   { value: 'AJUSTE_SALDO', label: 'Ajuste de Saldo' },
-  { value: 'CRIACAO_CONTA', label: 'Criação de Conta' },
-  { value: 'ATUALIZACAO_CONTA', label: 'Atualização de Conta' },
+  { value: 'CRIACAO_CONTA', label: 'Criação de Conta Bancária' },
+  { value: 'ATUALIZACAO_CONTA', label: 'Atualização de Conta Bancária' },
+  { value: 'INATIVACAO_CONTA', label: 'Inativação de Conta Bancária' },
+  { value: 'ATIVACAO_CONTA', label: 'Ativação de Conta Bancária' },
   { value: 'CRIACAO_USUARIO', label: 'Criação de Usuário' },
+  { value: 'ALTERACAO_PERMISSAO', label: 'Alteração de Permissão' },
+  { value: 'SOLICITACAO_RESET_SENHA', label: 'Solicitação de Reset de Senha' },
+  { value: 'RESET_SENHA', label: 'Reset de Senha' },
   { value: 'CRIACAO_EMPRESA', label: 'Criação de Empresa' },
   { value: 'ATUALIZACAO_EMPRESA', label: 'Atualização de Empresa' },
   { value: 'ALTERACAO_LICENCA', label: 'Alteração de Licença' },
   { value: 'TENTATIVA_LIMITE_USUARIOS', label: 'Tentativa: Limite de Usuários' },
+  { value: 'CRIACAO_CONTA_PAGAR', label: 'Criação de Conta a Pagar' },
+  { value: 'EDICAO_CONTA_PAGAR', label: 'Edição de Conta a Pagar' },
+  { value: 'CRIACAO_CONTA_RECEBER', label: 'Criação de Conta a Receber' },
+  { value: 'EDICAO_CONTA_RECEBER', label: 'Edição de Conta a Receber' },
   { value: 'CRIACAO_OS', label: 'Criação de OS' },
   { value: 'EDICAO_OS', label: 'Edição de OS' },
   { value: 'FINALIZACAO_OS', label: 'Finalização de OS' },
@@ -34,17 +43,13 @@ export default function Auditoria() {
   const [acaoFiltro, setAcaoFiltro] = useState<AcaoAuditoria | ''>('');
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ['auditoria', page],
-    queryFn: () => auditoriaApi.listar(page, LIMIT),
+    queryKey: ['auditoria', page, acaoFiltro],
+    queryFn: () => auditoriaApi.listar(page, LIMIT, acaoFiltro || undefined),
   });
 
   const registros = data?.data ?? [];
   const total = data?.total ?? 0;
   const totalPaginas = Math.ceil(total / LIMIT);
-
-  const registrosFiltrados = acaoFiltro
-    ? registros.filter((r) => r.acao === acaoFiltro)
-    : registros;
 
   return (
     <div className="space-y-6">
@@ -105,7 +110,7 @@ export default function Auditoria() {
         )}
 
         {!isLoading && !isError && (
-          <AuditoriaTable registros={registrosFiltrados} />
+          <AuditoriaTable registros={registros} />
         )}
       </div>
 

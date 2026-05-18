@@ -109,6 +109,8 @@ export class ConciliacaoController {
 
   @Delete('estornar/:conciliacaoId')
   @Roles(Role.SUPER_ADMIN, Role.ADMIN_EMPRESA)
+  @RequerPermissao(ChavePermissao.CONCILIACAO_EXECUTAR)
+  @UseGuards(PermissaoGuard)
   estornar(
     @Param('conciliacaoId', ParseUUIDPipe) conciliacaoId: string,
     @CurrentUser() user: { id: string; role: Role; empresaId: string },
@@ -118,6 +120,9 @@ export class ConciliacaoController {
   }
 
   @Get()
+  @Roles(Role.SUPER_ADMIN, Role.ADMIN_EMPRESA)
+  @RequerPermissao(ChavePermissao.CONCILIACAO_EXECUTAR)
+  @UseGuards(PermissaoGuard)
   listar(
     @CurrentUser() user: { role: Role; empresaId: string },
     @Headers('x-empresa-id') header: string,

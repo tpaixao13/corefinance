@@ -144,10 +144,10 @@ export class DashboardService {
         SUM(CASE WHEN tipo = 'DEBITO' THEN valor ELSE 0 END) as saidas
       FROM extrato_lancamento
       WHERE conta_id = $1 AND empresa_id = $2
-        AND data >= NOW() - INTERVAL '${meses} months'
+        AND data >= NOW() - (INTERVAL '1 month' * $3)
       GROUP BY DATE_TRUNC('month', data)
       ORDER BY mes ASC`,
-      [contaId, empresaId],
+      [contaId, empresaId, meses],
     );
   }
 }

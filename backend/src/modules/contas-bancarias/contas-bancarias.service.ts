@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, ForbiddenException, ConflictException } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
 import { ContaBancaria } from './conta-bancaria.entity';
@@ -6,7 +6,6 @@ import { CreateContaBancariaDto } from './dto/create-conta-bancaria.dto';
 import { UpdateContaBancariaDto } from './dto/update-conta-bancaria.dto';
 import { AuditoriaService } from '../auditoria/auditoria.service';
 import { AcaoAuditoria } from '../auditoria/auditoria-log.entity';
-import { Role } from '../usuarios/usuario.entity';
 
 export type ContaBancariaComMov = ContaBancaria & { temMovimentacoes: boolean };
 
@@ -36,15 +35,12 @@ export class ContasBancariasService {
     return parseInt(result[0].count) > 0;
   }
 
-  async criar(dto: CreateContaBancariaDto, usuarioId: string, usuarioRole: Role, usuarioEmpresaId: string): Promise<ContaBancaria> {
-    if (usuarioRole !== Role.SUPER_ADMIN && dto.empresaId !== usuarioEmpresaId) {
-      throw new ForbiddenException('Acesso negado a esta empresa');
-    }
-
-    await this.verificarDuplicata(dto.empresaId, dto.banco, dto.agencia, dto.numero);
+  async criar(dto: CreateContaBancariaDto, usuarioId: string, empresaId: string): Promise<ContaBancaria> {
+    await this.verificarDuplicata(empresaId, dto.banco, dto.agencia, dto.numero);
 
     const conta = this.contaRepo.create({
       ...dto,
+      empresaId,
       saldoAtual: dto.saldoInicial ?? 0,
     });
     const salva = await this.contaRepo.save(conta);

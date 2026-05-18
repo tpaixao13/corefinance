@@ -5,9 +5,11 @@ import {
   Put,
   Param,
   Body,
+  Headers,
   UseGuards,
   ParseUUIDPipe,
   Patch,
+  BadRequestException,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
@@ -33,8 +35,12 @@ export class ContasBancariasController {
   criar(
     @Body() dto: CreateContaBancariaDto,
     @CurrentUser() user: { id: string; role: Role; empresaId: string },
+    @Headers('x-empresa-id') header: string,
   ) {
-    return this.contasService.criar(dto, user.id, user.role, user.empresaId);
+    const empresaId = user.role === Role.SUPER_ADMIN
+      ? (header || (() => { throw new BadRequestException('Selecione uma empresa antes de continuar'); })())
+      : user.empresaId;
+    return this.contasService.criar(dto, user.id, empresaId);
   }
 
   @Get()

@@ -105,7 +105,6 @@ export interface ContaBancaria {
 }
 
 export interface CreateContaBancariaPayload {
-  empresaId: string;
   banco: string;
   agencia: string;
   numero: string;
@@ -213,6 +212,8 @@ export type AcaoAuditoria =
   | 'AJUSTE_SALDO'
   | 'CRIACAO_CONTA'
   | 'ATUALIZACAO_CONTA'
+  | 'INATIVACAO_CONTA'
+  | 'ATIVACAO_CONTA'
   | 'CRIACAO_EMPRESA'
   | 'ATUALIZACAO_EMPRESA'
   | 'CRIACAO_USUARIO'
@@ -220,6 +221,13 @@ export type AcaoAuditoria =
   | 'ESTORNO_CONCILIACAO'
   | 'ALTERACAO_LICENCA'
   | 'TENTATIVA_LIMITE_USUARIOS'
+  | 'ALTERACAO_PERMISSAO'
+  | 'SOLICITACAO_RESET_SENHA'
+  | 'RESET_SENHA'
+  | 'CRIACAO_CONTA_PAGAR'
+  | 'EDICAO_CONTA_PAGAR'
+  | 'CRIACAO_CONTA_RECEBER'
+  | 'EDICAO_CONTA_RECEBER'
   | 'CRIACAO_OS'
   | 'EDICAO_OS'
   | 'FINALIZACAO_OS'
@@ -241,7 +249,7 @@ export interface AuditoriaLog {
 }
 
 // ── Contas a Pagar ────────────────────────────────────
-export type StatusContaPagar = 'ABERTA' | 'PAGA' | 'ATRASADA' | 'CANCELADA';
+export type StatusContaPagar = 'ABERTA' | 'PAGA' | 'CANCELADA';
 export type RecorrenciaContaPagar = 'NENHUMA' | 'SEMANAL' | 'MENSAL' | 'TRIMESTRAL' | 'ANUAL';
 
 export interface ContaPagar {
@@ -275,7 +283,7 @@ export interface UpdateContaPagarPayload {
 }
 
 // ── Contas a Receber ──────────────────────────────────
-export type StatusContaReceber = 'ABERTA' | 'RECEBIDA' | 'ATRASADA' | 'CANCELADA';
+export type StatusContaReceber = 'ABERTA' | 'RECEBIDA' | 'CANCELADA';
 
 export interface ContaReceber {
   id: string;

@@ -92,9 +92,9 @@ export class RelatoriosService {
     const inicio = dataInicio ?? inicioMes();
     const fim = dataFim ?? fimMes();
 
-    const tipoFiltro =
-      tipo === 'despesas' ? `AND el.tipo = 'DEBITO'` :
-      tipo === 'receitas' ? `AND el.tipo = 'CREDITO'` : '';
+    const tipoParam =
+      tipo === 'despesas' ? 'DEBITO' :
+      tipo === 'receitas' ? 'CREDITO' : null;
 
     const rows = await this.dataSource.query(
       `SELECT
@@ -110,9 +110,9 @@ export class RelatoriosService {
        WHERE el.empresa_id = $1
          AND el.data >= $2
          AND el.data <= $3
-         ${tipoFiltro}
+         AND ($4::text IS NULL OR el.tipo = $4)
        ORDER BY el.data DESC, el.tipo`,
-      [empresaId, inicio, fim],
+      [empresaId, inicio, fim, tipoParam],
     );
 
     const header = 'Data,Tipo,Descricao,Valor,Banco,Conta,Status';

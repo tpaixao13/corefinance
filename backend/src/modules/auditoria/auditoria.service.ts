@@ -36,7 +36,7 @@ export class AuditoriaService {
     await this.auditoriaRepo.save(log);
   }
 
-  async listar(empresaId?: string, page = 1, limit = 50) {
+  async listar(empresaId?: string, page = 1, limit = 50, acao?: string) {
     const query = this.auditoriaRepo
       .createQueryBuilder('a')
       .leftJoinAndSelect('a.usuario', 'u')
@@ -46,6 +46,10 @@ export class AuditoriaService {
 
     if (empresaId) {
       query.where('a.empresa_id = :empresaId', { empresaId });
+    }
+
+    if (acao) {
+      query.andWhere('a.acao = :acao', { acao });
     }
 
     const [data, total] = await query.getManyAndCount();

@@ -5,6 +5,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { AuthProvider } from './contexts/AuthContext';
 import { EmpresaProvider } from './contexts/EmpresaContext';
 import { PermissoesProvider } from './contexts/PermissoesContext';
+import ErrorBoundary from './components/ErrorBoundary';
 import AppRoutes from './routes';
 import './index.css';
 
@@ -19,15 +20,17 @@ const queryClient = new QueryClient({
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <PermissoesProvider>
-          <EmpresaProvider>
-            <AppRoutes />
-          </EmpresaProvider>
-        </PermissoesProvider>
-      </AuthProvider>
-      <ReactQueryDevtools initialIsOpen={false} />
-    </QueryClientProvider>
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <PermissoesProvider>
+            <EmpresaProvider>
+              <AppRoutes />
+            </EmpresaProvider>
+          </PermissoesProvider>
+        </AuthProvider>
+        <ReactQueryDevtools initialIsOpen={false} />
+      </QueryClientProvider>
+    </ErrorBoundary>
   </StrictMode>,
 );

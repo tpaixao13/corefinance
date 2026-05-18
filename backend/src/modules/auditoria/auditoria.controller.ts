@@ -17,8 +17,9 @@ export class AuditoriaController {
     @CurrentUser() user: { role: Role; empresaId: string },
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(50), ParseIntPipe) limit: number,
+    @Query('acao') acao?: string,
   ) {
     const empresaId = user.role === Role.SUPER_ADMIN ? undefined : user.empresaId;
-    return this.auditoriaService.listar(empresaId, page, limit);
+    return this.auditoriaService.listar(empresaId, page, limit, acao);
   }
 }
