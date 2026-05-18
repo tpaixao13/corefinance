@@ -17,7 +17,7 @@ import { contasApi } from '../api/contas';
 import { useAuth } from '../contexts/AuthContext';
 import { useEmpresa } from '../contexts/EmpresaContext';
 import { useDashboardFinanceiro } from '../hooks/useDashboardFinanceiro';
-import { useDashboardReal, useDashboardPrevisao, useDashboardFluxo, useDashboardSimulacao } from '../hooks/useDashboardAvancado';
+import { useDashboardPrevisao, useDashboardFluxo, useDashboardSimulacao } from '../hooks/useDashboardAvancado';
 import FiltroPeriodo, { type Periodo } from '../components/FiltroPeriodo';
 import CardIndicador from '../components/CardIndicador';
 import ResumoPorConta from '../components/ResumoPorConta';
@@ -80,7 +80,6 @@ export default function Dashboard() {
   );
 
   const empresaId = empresaAtiva?.id;
-  const { data: dadosReal } = useDashboardReal(empresaId, periodo.dataInicio, periodo.dataFim);
   const { data: dadosPrevisao } = useDashboardPrevisao(empresaId);
   const { data: dadosFluxo } = useDashboardFluxo(empresaId);
   const { data: dadosSimulacao, isLoading: simulacaoLoading } = useDashboardSimulacao(empresaId, dataSimulacaoAtiva);
@@ -144,80 +143,40 @@ export default function Dashboard() {
         </div>
       )}
 
-      {/* ── Real vs Previsão ── */}
+      {/* ── Previsão ERP ── */}
       {hasEmpresa && empresaAtiva && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          {/* Bloco Real */}
-          <div className="bg-white border border-gray-200 rounded-xl p-5 space-y-4">
-            <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-green-500 shrink-0" />
-              <h3 className="text-sm font-semibold text-gray-700">💰 Caixa Real</h3>
-              <span className="ml-auto text-xs text-gray-400">extrato conciliado</span>
-            </div>
-            {!dadosReal ? (
-              <p className="text-sm text-gray-400 animate-pulse">Carregando...</p>
-            ) : (
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-gray-500">Saldo atual (contas ativas)</span>
-                  <span className={`text-base font-bold ${dadosReal.saldo >= 0 ? 'text-blue-700' : 'text-red-600'}`}>
-                    {brl(dadosReal.saldo)}
-                  </span>
-                </div>
-                <div className="h-px bg-gray-100" />
-                <div className="flex items-center justify-between">
-                  <span className="flex items-center gap-1.5 text-xs text-gray-500">
-                    <TrendingUp size={12} className="text-green-500" />
-                    Entradas conciliadas no período
-                  </span>
-                  <span className="text-sm font-semibold text-green-600">{brl(dadosReal.entradas)}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="flex items-center gap-1.5 text-xs text-gray-500">
-                    <TrendingDown size={12} className="text-red-400" />
-                    Saídas conciliadas no período
-                  </span>
-                  <span className="text-sm font-semibold text-red-600">{brl(dadosReal.saidas)}</span>
-                </div>
-              </div>
-            )}
+        <div className="bg-white border border-gray-200 rounded-xl p-5">
+          <div className="flex items-center gap-2 mb-4">
+            <span className="w-2.5 h-2.5 rounded-full bg-amber-400 shrink-0" />
+            <h3 className="text-sm font-semibold text-gray-700">📊 Previsão (ERP)</h3>
+            <span className="ml-auto text-xs text-gray-400">contas abertas</span>
           </div>
-
-          {/* Bloco Previsão */}
-          <div className="bg-white border border-gray-200 rounded-xl p-5 space-y-4">
-            <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-amber-400 shrink-0" />
-              <h3 className="text-sm font-semibold text-gray-700">📊 Previsão (ERP)</h3>
-              <span className="ml-auto text-xs text-gray-400">contas abertas</span>
-            </div>
-            {!dadosPrevisao ? (
-              <p className="text-sm text-gray-400 animate-pulse">Carregando...</p>
-            ) : (
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="flex items-center gap-1.5 text-xs text-gray-500">
-                    <TrendingUp size={12} className="text-green-500" />
-                    A receber (em aberto)
-                  </span>
-                  <span className="text-sm font-semibold text-green-600">{brl(dadosPrevisao.aReceber)}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="flex items-center gap-1.5 text-xs text-gray-500">
-                    <TrendingDown size={12} className="text-red-400" />
-                    A pagar (em aberto)
-                  </span>
-                  <span className="text-sm font-semibold text-red-600">{brl(dadosPrevisao.aPagar)}</span>
-                </div>
-                <div className="h-px bg-gray-100" />
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-gray-500">Resultado futuro previsto</span>
-                  <span className={`text-base font-bold ${dadosPrevisao.resultado >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
-                    {brl(dadosPrevisao.resultado)}
-                  </span>
-                </div>
+          {!dadosPrevisao ? (
+            <p className="text-sm text-gray-400 animate-pulse">Carregando...</p>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="flex items-center justify-between sm:flex-col sm:items-start gap-1">
+                <span className="flex items-center gap-1.5 text-xs text-gray-500">
+                  <TrendingUp size={12} className="text-green-500" />
+                  A receber (em aberto)
+                </span>
+                <span className="text-base font-semibold text-green-600">{brl(dadosPrevisao.aReceber)}</span>
               </div>
-            )}
-          </div>
+              <div className="flex items-center justify-between sm:flex-col sm:items-start gap-1">
+                <span className="flex items-center gap-1.5 text-xs text-gray-500">
+                  <TrendingDown size={12} className="text-red-400" />
+                  A pagar (em aberto)
+                </span>
+                <span className="text-base font-semibold text-red-600">{brl(dadosPrevisao.aPagar)}</span>
+              </div>
+              <div className="flex items-center justify-between sm:flex-col sm:items-start gap-1">
+                <span className="text-xs text-gray-500">Resultado futuro previsto</span>
+                <span className={`text-base font-bold ${dadosPrevisao.resultado >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
+                  {brl(dadosPrevisao.resultado)}
+                </span>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
