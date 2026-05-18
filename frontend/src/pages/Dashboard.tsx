@@ -22,6 +22,7 @@ import FiltroPeriodo, { type Periodo } from '../components/FiltroPeriodo';
 import CardIndicador from '../components/CardIndicador';
 import ResumoPorConta from '../components/ResumoPorConta';
 import FluxoCaixaChart from '../components/FluxoCaixaChart';
+import ResumoCaixaModal from '../components/ResumoCaixaModal';
 import type { ContaBancaria } from '../types';
 
 function isoHoje() {
@@ -70,6 +71,7 @@ export default function Dashboard() {
     }
   }, [contas, contaIdAtual]);
 
+  const [showResumoCaixa, setShowResumoCaixa] = useState(false);
   const [dataSimulacao, setDataSimulacao] = useState('');
   const [dataSimulacaoAtiva, setDataSimulacaoAtiva] = useState('');
 
@@ -317,7 +319,7 @@ export default function Dashboard() {
                     valor={resumo.saldoAtual}
                     icone={<Wallet size={16} />}
                     variante={resumo.saldoAtual >= 0 ? 'blue' : 'red'}
-                    onClick={() => navigate('/contas')}
+                    onClick={() => setShowResumoCaixa(true)}
                     badge={
                       resumo.totalPendentes > 0
                         ? { texto: `${resumo.totalPendentes} pendentes`, cor: 'bg-yellow-100 text-yellow-700' }
@@ -382,6 +384,14 @@ export default function Dashboard() {
             )}
           </div>
         </div>
+      )}
+      {showResumoCaixa && resumo && contaAtiva && (
+        <ResumoCaixaModal
+          resumo={resumo}
+          conta={contaAtiva}
+          periodo={periodo}
+          onClose={() => setShowResumoCaixa(false)}
+        />
       )}
     </div>
   );
