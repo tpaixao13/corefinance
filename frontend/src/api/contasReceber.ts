@@ -7,9 +7,9 @@ import type {
 } from '../types';
 
 export const contasReceberApi = {
-  listar: (page = 1, limit = 50) =>
+  listar: (page = 1, limit = 50, status?: string) =>
     api
-      .get<Paginated<ContaReceber>>('/contas-receber', { params: { page, limit } })
+      .get<Paginated<ContaReceber>>('/contas-receber', { params: { page, limit, ...(status ? { status } : {}) } })
       .then((r) => r.data),
 
   criar: (dto: CreateContaReceberPayload) =>

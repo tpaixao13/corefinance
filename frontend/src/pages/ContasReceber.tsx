@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { TrendingUp, Plus, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useSearchParams } from 'react-router-dom';
 import { useContasReceber } from '../hooks/useContasReceber';
 import { usePermissoesCtx } from '../contexts/PermissoesContext';
 import ContasReceberTable from '../components/ContasReceberTable';
@@ -13,11 +14,13 @@ export default function ContasReceber() {
   const { temPermissao, isLoading: permLoading } = usePermissoesCtx();
 
   if (!permLoading && !temPermissao('CONTAS_RECEBER_VIEW')) return <AcessoNegado />;
+  const [searchParams] = useSearchParams();
+  const statusFiltro = searchParams.get('status') ?? undefined;
   const [page, setPage] = useState(1);
   const [showForm, setShowForm] = useState(false);
   const [editTarget, setEditTarget] = useState<ContaReceber | undefined>();
 
-  const { data, isLoading, isError } = useContasReceber(page, LIMIT);
+  const { data, isLoading, isError } = useContasReceber(page, LIMIT, statusFiltro);
 
   const canCreate = temPermissao('CONTAS_RECEBER_CREATE');
   const canEdit = temPermissao('CONTAS_RECEBER_EDIT');
@@ -67,6 +70,13 @@ export default function ContasReceber() {
           )}
         </div>
       </div>
+
+      {statusFiltro && (
+        <div className="bg-blue-50 border border-blue-200 text-blue-700 rounded-lg px-4 py-2 text-sm flex items-center justify-between">
+          <span>Filtrando por: <strong>{statusFiltro === 'ABERTA' ? 'Em aberto' : statusFiltro}</strong></span>
+          <a href="/contas-receber" className="text-blue-500 hover:underline text-xs">Limpar filtro</a>
+        </div>
+      )}
 
       <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 rounded-lg px-4 py-3 text-sm">
         Contas a receber são previsões. O status <strong>Recebida</strong> é atualizado automaticamente pela conciliação bancária.

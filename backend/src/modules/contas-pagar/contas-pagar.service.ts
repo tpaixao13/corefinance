@@ -35,9 +35,9 @@ export class ContasPagarService {
     return salva;
   }
 
-  async listar(empresaId: string, page = 1, limit = 50) {
+  async listar(empresaId: string, page = 1, limit = 50, status?: StatusContaPagar) {
     const [data, total] = await this.repo.findAndCount({
-      where: { empresaId },
+      where: { empresaId, ...(status ? { status } : {}) },
       order: { dataVencimento: 'ASC', createdAt: 'DESC' },
       skip: (page - 1) * limit,
       take: limit,

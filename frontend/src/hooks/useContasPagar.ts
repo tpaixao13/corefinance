@@ -3,11 +3,11 @@ import { contasPagarApi } from '../api/contasPagar';
 import { useAuth } from '../contexts/AuthContext';
 import type { CreateContaPagarPayload, UpdateContaPagarPayload } from '../types';
 
-export function useContasPagar(page = 1, limit = 50) {
+export function useContasPagar(page = 1, limit = 50, status?: string) {
   const { isAuthenticated } = useAuth();
   return useQuery({
-    queryKey: ['contas-pagar', page],
-    queryFn: () => contasPagarApi.listar(page, limit),
+    queryKey: ['contas-pagar', page, status],
+    queryFn: () => contasPagarApi.listar(page, limit, status),
     enabled: isAuthenticated,
   });
 }

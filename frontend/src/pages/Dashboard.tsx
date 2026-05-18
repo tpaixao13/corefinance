@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 import {
   Building2,
   TrendingUp,
@@ -38,6 +39,7 @@ const brl = (v: number) =>
 export default function Dashboard() {
   const { isAuthenticated, user } = useAuth();
   const { empresaAtiva } = useEmpresa();
+  const navigate = useNavigate();
   const isSuperAdmin = user?.role === 'SUPER_ADMIN';
   const hasEmpresa = isSuperAdmin ? !!empresaAtiva : true;
 
@@ -176,6 +178,7 @@ export default function Dashboard() {
                     icone={<TrendingUp size={16} />}
                     variante="green"
                     subtitulo="Créditos no período"
+                    onClick={() => navigate('/contas-receber?status=ABERTA')}
                   />
                   <CardIndicador
                     titulo="Total Saídas"
@@ -183,6 +186,7 @@ export default function Dashboard() {
                     icone={<TrendingDown size={16} />}
                     variante="red"
                     subtitulo="Débitos no período"
+                    onClick={() => navigate('/contas-pagar?status=ABERTA')}
                   />
                   <CardIndicador
                     titulo="Saldo Atual"
@@ -217,21 +221,30 @@ export default function Dashboard() {
                     Status de Conciliação
                   </h3>
                   <div className="grid grid-cols-3 gap-3">
-                    <div className="text-center p-3 bg-green-50 rounded-lg">
+                    <div
+                      className="text-center p-3 bg-green-50 rounded-lg cursor-pointer hover:bg-green-100 transition-colors"
+                      onClick={() => navigate('/conciliacao?status=CONCILIADO')}
+                    >
                       <p className="text-2xl font-bold text-green-700">{resumo.totalConciliados}</p>
                       <div className="flex items-center justify-center gap-1 mt-1">
                         <CheckCheck size={11} className="text-green-500" />
                         <p className="text-xs text-green-600 font-medium">Conciliados</p>
                       </div>
                     </div>
-                    <div className="text-center p-3 bg-yellow-50 rounded-lg">
+                    <div
+                      className="text-center p-3 bg-yellow-50 rounded-lg cursor-pointer hover:bg-yellow-100 transition-colors"
+                      onClick={() => navigate('/conciliacao?status=PENDENTE')}
+                    >
                       <p className="text-2xl font-bold text-yellow-700">{resumo.totalPendentes}</p>
                       <div className="flex items-center justify-center gap-1 mt-1">
                         <Clock size={11} className="text-yellow-500" />
                         <p className="text-xs text-yellow-600 font-medium">Pendentes</p>
                       </div>
                     </div>
-                    <div className="text-center p-3 bg-red-50 rounded-lg">
+                    <div
+                      className="text-center p-3 bg-red-50 rounded-lg cursor-pointer hover:bg-red-100 transition-colors"
+                      onClick={() => navigate('/conciliacao?status=NAO_ENCONTRADO')}
+                    >
                       <p className="text-2xl font-bold text-red-700">{resumo.totalNaoEncontrados}</p>
                       <div className="flex items-center justify-center gap-1 mt-1">
                         <AlertTriangle size={11} className="text-red-400" />

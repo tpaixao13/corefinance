@@ -63,9 +63,10 @@ export class ContasPagarController {
     @Headers('x-empresa-id') empresaIdHeader: string,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(50), ParseIntPipe) limit: number,
+    @Query('status') status?: string,
   ) {
     const empresaId = this.resolveEmpresaId(user, empresaIdHeader);
-    return this.service.listar(empresaId, page, limit);
+    return this.service.listar(empresaId, page, limit, status as any);
   }
 
   @Get(':id')

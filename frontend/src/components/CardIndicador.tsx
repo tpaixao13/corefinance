@@ -20,6 +20,7 @@ interface Props {
   variante?: Variante;
   subtitulo?: string;
   badge?: { texto: string; cor: string };
+  onClick?: () => void;
 }
 
 export default function CardIndicador({
@@ -29,10 +30,14 @@ export default function CardIndicador({
   variante = 'default',
   subtitulo,
   badge,
+  onClick,
 }: Props) {
   const e = estilos[variante];
   return (
-    <div className="bg-white border border-gray-200 rounded-xl p-5">
+    <div
+      className={`bg-white border border-gray-200 rounded-xl p-5 transition-shadow${onClick ? ' cursor-pointer hover:shadow-md hover:border-blue-300' : ''}`}
+      onClick={onClick}
+    >
       <div className="flex items-start justify-between mb-4">
         <div className={`p-2 rounded-lg ${e.icon}`}>{icone}</div>
         {badge && (

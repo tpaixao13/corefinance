@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { GitMerge, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
+import { useSearchParams } from 'react-router-dom';
 import { contasApi } from '../api/contas';
 import { usePendentes } from '../hooks/useConciliacao';
 import { useAuth } from '../contexts/AuthContext';
@@ -15,6 +16,8 @@ const FILTROS_VAZIOS = { dataInicio: '', dataFim: '', tipo: '' as const };
 
 export default function Conciliacao() {
   const { isAuthenticated, user } = useAuth();
+  const [searchParams] = useSearchParams();
+  const statusFiltro = searchParams.get('status'); // PENDENTE | CONCILIADO | NAO_ENCONTRADO | null
   const [page, setPage] = useState(1);
   const [filtros, setFiltros] = useState<FiltrosConciliacao>({
     contaId: '',
@@ -38,7 +41,11 @@ export default function Conciliacao() {
   const contaAtiva = contas?.find((c) => c.id === filtros.contaId);
 
   const pendentes = (data?.data ?? []).filter((l) => {
-    if (l.statusConciliacao === 'CONCILIADO') return false;
+    if (statusFiltro) {
+      if (l.statusConciliacao !== statusFiltro) return false;
+    } else {
+      if (l.statusConciliacao === 'CONCILIADO') return false;
+    }
     if (filtros.tipo && l.tipo !== filtros.tipo) return false;
     if (filtros.dataInicio && l.data < filtros.dataInicio) return false;
     if (filtros.dataFim && l.data > filtros.dataFim) return false;
@@ -72,6 +79,15 @@ export default function Conciliacao() {
           />
         )}
       </div>
+
+      {statusFiltro && (
+        <div className="bg-blue-50 border border-blue-200 text-blue-700 rounded-lg px-4 py-2 text-sm flex items-center justify-between">
+          <span>
+            Filtrando por: <strong>{statusFiltro === 'CONCILIADO' ? 'Conciliados' : statusFiltro === 'PENDENTE' ? 'Pendentes' : 'Não encontrados'}</strong>
+          </span>
+          <a href="/conciliacao" className="text-blue-500 hover:underline text-xs">Limpar filtro</a>
+        </div>
+      )}
 
       {contas && contas.length === 0 && (
         <div className="bg-yellow-50 border border-yellow-200 text-yellow-700 rounded-lg p-4 text-sm">

@@ -3,11 +3,11 @@ import { contasReceberApi } from '../api/contasReceber';
 import { useAuth } from '../contexts/AuthContext';
 import type { CreateContaReceberPayload, UpdateContaReceberPayload } from '../types';
 
-export function useContasReceber(page = 1, limit = 50) {
+export function useContasReceber(page = 1, limit = 50, status?: string) {
   const { isAuthenticated } = useAuth();
   return useQuery({
-    queryKey: ['contas-receber', page],
-    queryFn: () => contasReceberApi.listar(page, limit),
+    queryKey: ['contas-receber', page, status],
+    queryFn: () => contasReceberApi.listar(page, limit, status),
     enabled: isAuthenticated,
   });
 }
