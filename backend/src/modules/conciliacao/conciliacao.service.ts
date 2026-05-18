@@ -4,7 +4,7 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, DataSource, Between } from 'typeorm';
+import { Repository, DataSource, LessThanOrEqual } from 'typeorm';
 import { Conciliacao, TipoConciliacao, StatusConciliacaoRegistro } from './conciliacao.entity';
 import { ExtratoLancamento, StatusConciliacao } from '../extratos/extrato-lancamento.entity';
 import { ContaPagar, StatusContaPagar } from '../contas-pagar/conta-pagar.entity';
@@ -55,6 +55,21 @@ function shiftDate(dateStr: string, days: number): string {
   return d.toISOString().split('T')[0];
 }
 
+// Ordena contas pelo menor delta em relação à data da transação.
+// Contas vencidas (no passado) e com vencimento próximo têm prioridade.
+function maisProxima<T extends { dataVencimento?: string; dataRecebimento?: string }>(
+  contas: T[],
+  dataTransacao: string,
+  campo: 'dataVencimento' | 'dataRecebimento',
+): T[] {
+  const ref = new Date(dataTransacao + 'T00:00:00').getTime();
+  return [...contas].sort((a, b) => {
+    const da = Math.abs(new Date((a[campo] as string) + 'T00:00:00').getTime() - ref);
+    const db = Math.abs(new Date((b[campo] as string) + 'T00:00:00').getTime() - ref);
+    return da - db;
+  });
+}
+
 @Injectable()
 export class ConciliacaoService {
   constructor(
@@ -98,21 +113,21 @@ export class ConciliacaoService {
     try {
       for (const lancamento of lancamentos) {
         const dataStr = toDateStr(lancamento.data as unknown as Date | string);
-        const dataInicio = shiftDate(dataStr, -5);
-        const dataFim = shiftDate(dataStr, 5);
+        const limiteF = shiftDate(dataStr, 30);
         const valor = Number(lancamento.valor);
 
         let conciliacaoId: string | null = null;
 
         if (lancamento.tipo === 'CREDITO') {
-          const cr = await queryRunner.manager.findOne(ContaReceber, {
+          const crs = await queryRunner.manager.find(ContaReceber, {
             where: {
               empresaId,
               valor: valor as any,
               status: StatusContaReceber.ABERTA,
-              dataRecebimento: Between(dataInicio, dataFim) as any,
+              dataRecebimento: LessThanOrEqual(limiteF) as any,
             },
           });
+          const cr = maisProxima(crs, dataStr, 'dataRecebimento')[0];
           if (cr) {
             const conc = queryRunner.manager.create(Conciliacao, {
               empresaId,
@@ -131,14 +146,15 @@ export class ConciliacaoService {
             conciliados++;
           }
         } else {
-          const cp = await queryRunner.manager.findOne(ContaPagar, {
+          const cps = await queryRunner.manager.find(ContaPagar, {
             where: {
               empresaId,
               valor: valor as any,
               status: StatusContaPagar.ABERTA,
-              dataVencimento: Between(dataInicio, dataFim) as any,
+              dataVencimento: LessThanOrEqual(limiteF) as any,
             },
           });
+          const cp = maisProxima(cps, dataStr, 'dataVencimento')[0];
           if (cp) {
             const conc = queryRunner.manager.create(Conciliacao, {
               empresaId,
@@ -217,16 +233,21 @@ export class ConciliacaoService {
 
       let matched = false;
 
+      // Limite futuro: até 30 dias após a transação (evita casar contas futuras distantes)
+      const limiteF = shiftDate(dataStr, 30);
+
       if (lancamento.tipo === 'CREDITO') {
         const crs = await this.contaReceberRepo.find({
           where: {
             empresaId,
             valor: valor as any,
             status: StatusContaReceber.ABERTA,
-            dataRecebimento: Between(dataInicio, dataFim) as any,
+            dataRecebimento: LessThanOrEqual(limiteF) as any,
           },
         });
-        const cr = crs.find((c) => !usedContaErpIds.has(c.id));
+        const cr = maisProxima(crs, dataStr, 'dataRecebimento').find(
+          (c) => !usedContaErpIds.has(c.id),
+        );
         if (cr) {
           usedContaErpIds.add(cr.id);
           matches.push({
@@ -250,10 +271,12 @@ export class ConciliacaoService {
             empresaId,
             valor: valor as any,
             status: StatusContaPagar.ABERTA,
-            dataVencimento: Between(dataInicio, dataFim) as any,
+            dataVencimento: LessThanOrEqual(limiteF) as any,
           },
         });
-        const cp = cps.find((c) => !usedContaErpIds.has(c.id));
+        const cp = maisProxima(cps, dataStr, 'dataVencimento').find(
+          (c) => !usedContaErpIds.has(c.id),
+        );
         if (cp) {
           usedContaErpIds.add(cp.id);
           matches.push({
