@@ -68,7 +68,7 @@ export default function Conciliacao() {
         {filtros.contaId && (
           <ConciliacaoActions
             contaId={filtros.contaId}
-            totalPendentes={pendentes.filter(l => l.statusConciliacao === 'PENDENTE').length}
+            totalPendentes={pendentes.length}
           />
         )}
       </div>

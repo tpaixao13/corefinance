@@ -38,7 +38,10 @@ export class ConciliacaoService {
     usuarioId: string,
   ): Promise<ResultadoConciliacao> {
     const lancamentosPendentes = await this.lancamentoRepo.find({
-      where: { contaId, empresaId, statusConciliacao: StatusConciliacao.PENDENTE },
+      where: [
+        { contaId, empresaId, statusConciliacao: StatusConciliacao.PENDENTE },
+        { contaId, empresaId, statusConciliacao: StatusConciliacao.NAO_ENCONTRADO },
+      ],
       order: { data: 'ASC' },
     });
 
@@ -50,6 +53,24 @@ export class ConciliacaoService {
     let naoEncontrados = 0;
 
     try {
+      // Reseta NAO_ENCONTRADO → PENDENTE para permitir nova tentativa
+      const idsParaResetar = lancamentosPendentes
+        .filter((l) => l.statusConciliacao === StatusConciliacao.NAO_ENCONTRADO)
+        .map((l) => l.id);
+      if (idsParaResetar.length > 0) {
+        await queryRunner.manager
+          .createQueryBuilder()
+          .update(ExtratoLancamento)
+          .set({ statusConciliacao: StatusConciliacao.PENDENTE })
+          .whereInIds(idsParaResetar)
+          .execute();
+        lancamentosPendentes.forEach((l) => {
+          if (idsParaResetar.includes(l.id)) {
+            l.statusConciliacao = StatusConciliacao.PENDENTE;
+          }
+        });
+      }
+
       for (const lancamento of lancamentosPendentes) {
         const dataInicio = new Date(lancamento.data);
         dataInicio.setDate(dataInicio.getDate() - 2);
