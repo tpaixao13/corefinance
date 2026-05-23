@@ -37,7 +37,7 @@ export const relatoriosFinanceiroApi = {
     });
 
     // Se o backend retornou JSON de erro dentro do blob, lança exceção legível
-    const contentType = response.headers?.['content-type'] ?? '';
+    const contentType = String(response.headers?.['content-type'] ?? '');
     if (contentType.includes('application/json')) {
       const text = await (response.data as Blob).text();
       throw new Error(JSON.parse(text)?.message ?? 'Erro ao exportar');
