@@ -110,7 +110,7 @@ export class RelatoriosService {
        WHERE el.empresa_id = $1
          AND el.data >= $2
          AND el.data <= $3
-         AND ($4::text IS NULL OR el.tipo = $4)
+         AND ($4::text IS NULL OR el.tipo::text = $4)
        ORDER BY el.data DESC, el.tipo`,
       [empresaId, inicio, fim, tipoParam],
     );
