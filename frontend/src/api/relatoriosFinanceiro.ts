@@ -35,13 +35,24 @@ export const relatoriosFinanceiroApi = {
       params,
       responseType: 'blob',
     });
+
+    // Se o backend retornou JSON de erro dentro do blob, lança exceção legível
+    const contentType = response.headers?.['content-type'] ?? '';
+    if (contentType.includes('application/json')) {
+      const text = await (response.data as Blob).text();
+      throw new Error(JSON.parse(text)?.message ?? 'Erro ao exportar');
+    }
+
     const tipo = params.tipo ?? 'geral';
     const data = new Date().toISOString().slice(0, 10);
-    const url = URL.createObjectURL(new Blob([response.data], { type: 'text/csv;charset=utf-8;' }));
+    const blob = new Blob([response.data], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
     a.download = `relatorio-${tipo}-${data}.csv`;
+    document.body.appendChild(a);
     a.click();
-    URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 150);
   },
 };
