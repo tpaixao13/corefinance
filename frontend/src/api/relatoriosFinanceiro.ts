@@ -30,6 +30,26 @@ export const relatoriosFinanceiroApi = {
   financeiro: (params: RelatorioParams) =>
     api.get<FinanceiroResult>('/relatorios/financeiro', { params }).then((r) => r.data),
 
+  exportarXlsx: async (params: RelatorioParams & { tipo?: string }) => {
+    const response = await api.get('/relatorios/exportar-xlsx', {
+      params,
+      responseType: 'blob',
+    });
+    const tipo = params.tipo ?? 'geral';
+    const data = new Date().toISOString().slice(0, 10);
+    const blob = new Blob([response.data], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `relatorio-${tipo}-${data}.xlsx`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 150);
+  },
+
   exportar: async (params: RelatorioParams & { tipo?: string }) => {
     const response = await api.get('/relatorios/exportar', {
       params,

@@ -43,6 +43,29 @@ export class RelatoriosController {
     return this.relatoriosService.relatorioFinanceiro(empresaId, query.dataInicio, query.dataFim);
   }
 
+  @Get('exportar-xlsx')
+  @Roles(Role.SUPER_ADMIN, Role.ADMIN_EMPRESA)
+  async exportarXlsx(
+    @Query() query: ExportarQueryDto,
+    @CurrentUser() user: { role: Role; empresaId: string },
+    @Headers('x-empresa-id') header: string,
+    @Res() res: Response,
+  ) {
+    const empresaId = user.role === Role.SUPER_ADMIN
+      ? (query.empresaId ?? header ?? user.empresaId)
+      : user.empresaId;
+
+    const tipo = query.tipo ?? 'geral';
+    const buffer = await this.relatoriosService.gerarXlsx(empresaId, tipo, query.dataInicio, query.dataFim);
+
+    const dataStr = new Date().toISOString().slice(0, 10);
+    const filename = `relatorio-${tipo}-${dataStr}.xlsx`;
+
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+    res.send(buffer);
+  }
+
   @Get('exportar')
   @Roles(Role.SUPER_ADMIN, Role.ADMIN_EMPRESA)
   async exportar(
