@@ -46,8 +46,11 @@ export class ContasBancariasController {
   @Get()
   @RequerPermissao(ChavePermissao.CONTA_BANCARIA_VIEW)
   @UseGuards(PermissaoGuard)
-  listar(@CurrentUser() user: { role: Role; empresaId: string }) {
-    const empresaId = user.role === Role.SUPER_ADMIN ? undefined : user.empresaId;
+  listar(
+    @CurrentUser() user: { role: Role; empresaId: string },
+    @Headers('x-empresa-id') header: string,
+  ) {
+    const empresaId = user.role === Role.SUPER_ADMIN ? (header || undefined) : user.empresaId;
     return this.contasService.listar(empresaId);
   }
 
@@ -57,8 +60,9 @@ export class ContasBancariasController {
   buscar(
     @Param('id', ParseUUIDPipe) id: string,
     @CurrentUser() user: { role: Role; empresaId: string },
+    @Headers('x-empresa-id') header: string,
   ) {
-    const empresaId = user.role === Role.SUPER_ADMIN ? undefined : user.empresaId;
+    const empresaId = user.role === Role.SUPER_ADMIN ? (header || undefined) : user.empresaId;
     return this.contasService.buscarPorId(id, empresaId);
   }
 

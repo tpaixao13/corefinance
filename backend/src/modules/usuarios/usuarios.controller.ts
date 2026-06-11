@@ -5,6 +5,7 @@ import {
   Patch,
   Param,
   Body,
+  Headers,
   UseGuards,
   ParseUUIDPipe,
   HttpCode,
@@ -37,8 +38,11 @@ export class UsuariosController {
 
   @Get()
   @Roles(Role.SUPER_ADMIN, Role.ADMIN_EMPRESA)
-  listar(@CurrentUser() user: { role: Role; empresaId: string }) {
-    return this.usuariosService.listar(user);
+  listar(
+    @CurrentUser() user: { role: Role; empresaId: string },
+    @Headers('x-empresa-id') header: string,
+  ) {
+    return this.usuariosService.listar(user, header);
   }
 
   @Get('minhas-permissoes')

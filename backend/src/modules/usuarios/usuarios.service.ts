@@ -83,13 +83,15 @@ export class UsuariosService {
     return resultado;
   }
 
-  async listar(usuarioAtual: { role: Role; empresaId: string }): Promise<Omit<Usuario, 'senhaHash'>[]> {
+  async listar(usuarioAtual: { role: Role; empresaId: string }, headerEmpresaId?: string): Promise<Omit<Usuario, 'senhaHash'>[]> {
     const query = this.usuarioRepo.createQueryBuilder('u').select([
       'u.id', 'u.nome', 'u.email', 'u.role', 'u.ativo', 'u.empresaId', 'u.createdAt',
     ]);
 
     if (usuarioAtual.role !== Role.SUPER_ADMIN) {
       query.where('u.empresa_id = :empresaId', { empresaId: usuarioAtual.empresaId });
+    } else if (headerEmpresaId) {
+      query.where('u.empresa_id = :empresaId', { empresaId: headerEmpresaId });
     }
 
     return query.getMany() as unknown as Omit<Usuario, 'senhaHash'>[];
