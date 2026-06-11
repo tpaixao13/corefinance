@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import type { Empresa } from '../types';
 import { useAuth } from './AuthContext';
 import { empresaApi } from '../api/empresa';
@@ -12,6 +13,7 @@ const EmpresaContext = createContext<EmpresaContextValue | null>(null);
 
 export function EmpresaProvider({ children }: { children: ReactNode }) {
   const { user, isAuthenticated } = useAuth();
+  const queryClient = useQueryClient();
   const [empresaAtiva, setEmpresaAtivaState] = useState<Empresa | null>(null);
 
   useEffect(() => {
@@ -31,7 +33,9 @@ export function EmpresaProvider({ children }: { children: ReactNode }) {
   const setEmpresaAtiva = useCallback((empresa: Empresa) => {
     localStorage.setItem('empresaId', empresa.id);
     setEmpresaAtivaState(empresa);
-  }, []);
+    // Invalida todo o cache para que os dados da nova empresa sejam buscados
+    queryClient.invalidateQueries();
+  }, [queryClient]);
 
   return (
     <EmpresaContext.Provider value={{ empresaAtiva, setEmpresaAtiva }}>
