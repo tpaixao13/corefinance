@@ -87,4 +87,25 @@ export class ContasReceberService {
     conta.status = StatusContaReceber.RECEBIDA;
     return this.repo.save(conta);
   }
+
+  async excluir(id: string, empresaId: string, operadorId: string): Promise<void> {
+    const conta = await this.buscarPorId(id, empresaId);
+    // Desvincula ordens de serviço que geraram esta conta
+    await this.repo.manager.transaction(async (manager) => {
+      await manager.query(
+        `UPDATE ordem_servico SET conta_receber_id = NULL WHERE conta_receber_id = $1`,
+        [id],
+      );
+      await manager.delete(ContaReceber, id);
+    });
+
+    this.auditoriaService.registrar({
+      usuarioId: operadorId,
+      empresaId,
+      acao: AcaoAuditoria.EXCLUSAO_CONTA_RECEBER,
+      entidade: 'conta_receber',
+      entidadeId: id,
+      dadosAntes: { descricao: conta.descricao, valor: conta.valor, dataRecebimento: conta.dataRecebimento, status: conta.status },
+    }).catch((err) => console.error('[auditoria] EXCLUSAO_CONTA_RECEBER falhou:', err));
+  }
 }

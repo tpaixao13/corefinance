@@ -87,4 +87,18 @@ export class ContasPagarService {
     conta.status = StatusContaPagar.PAGA;
     return this.repo.save(conta);
   }
+
+  async excluir(id: string, empresaId: string, operadorId: string): Promise<void> {
+    const conta = await this.buscarPorId(id, empresaId);
+    await this.repo.delete(id);
+
+    this.auditoriaService.registrar({
+      usuarioId: operadorId,
+      empresaId,
+      acao: AcaoAuditoria.EXCLUSAO_CONTA_PAGAR,
+      entidade: 'conta_pagar',
+      entidadeId: id,
+      dadosAntes: { descricao: conta.descricao, valor: conta.valor, dataVencimento: conta.dataVencimento, status: conta.status },
+    }).catch((err) => console.error('[auditoria] EXCLUSAO_CONTA_PAGAR falhou:', err));
+  }
 }

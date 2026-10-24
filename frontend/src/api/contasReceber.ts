@@ -17,4 +17,6 @@ export const contasReceberApi = {
 
   atualizar: (id: string, dto: UpdateContaReceberPayload) =>
     api.put<ContaReceber>(`/contas-receber/${id}`, dto).then((r) => r.data),
+
+  excluir: (id: string) => api.delete(`/contas-receber/${id}`).then(() => undefined),
 };

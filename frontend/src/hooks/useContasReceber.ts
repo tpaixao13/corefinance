@@ -28,3 +28,11 @@ export function useAtualizarContaReceber() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ['contas-receber'] }),
   });
 }
+
+export function useExcluirContaReceber() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => contasReceberApi.excluir(id),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['contas-receber'] }),
+  });
+}

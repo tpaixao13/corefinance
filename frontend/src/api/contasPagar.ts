@@ -17,4 +17,6 @@ export const contasPagarApi = {
 
   atualizar: (id: string, dto: UpdateContaPagarPayload) =>
     api.put<ContaPagar>(`/contas-pagar/${id}`, dto).then((r) => r.data),
+
+  excluir: (id: string) => api.delete(`/contas-pagar/${id}`).then(() => undefined),
 };

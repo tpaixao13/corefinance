@@ -29,6 +29,8 @@ const ACAO_LABEL: Record<AcaoAuditoria, string> = {
   CANCELAMENTO_OS: 'Cancelamento de OS',
   ENVIO_EMAIL_OS: 'Envio de E-mail OS',
   EXCLUSAO_LANCAMENTO: 'Exclusão de Lançamento',
+  EXCLUSAO_CONTA_PAGAR: 'Exclusão de Conta a Pagar',
+  EXCLUSAO_CONTA_RECEBER: 'Exclusão de Conta a Receber',
 };
 
 const ACAO_COR: Record<AcaoAuditoria, string> = {
@@ -60,6 +62,8 @@ const ACAO_COR: Record<AcaoAuditoria, string> = {
   CANCELAMENTO_OS: 'bg-gray-100 text-gray-500',
   ENVIO_EMAIL_OS: 'bg-indigo-100 text-indigo-700',
   EXCLUSAO_LANCAMENTO: 'bg-red-100 text-red-700',
+  EXCLUSAO_CONTA_PAGAR: 'bg-red-100 text-red-700',
+  EXCLUSAO_CONTA_RECEBER: 'bg-red-100 text-red-700',
 };
 
 function formatarData(iso: string) {

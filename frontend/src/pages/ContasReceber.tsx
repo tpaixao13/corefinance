@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { TrendingUp, Plus, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
-import { useContasReceber } from '../hooks/useContasReceber';
+import { useContasReceber, useExcluirContaReceber } from '../hooks/useContasReceber';
+import { useAuth } from '../contexts/AuthContext';
 import { usePermissoesCtx } from '../contexts/PermissoesContext';
 import ContasReceberTable from '../components/ContasReceberTable';
 import ContaReceberForm from '../components/ContaReceberForm';
@@ -12,6 +13,8 @@ const LIMIT = 50;
 
 export default function ContasReceber() {
   const { temPermissao, isLoading: permLoading } = usePermissoesCtx();
+  const { user } = useAuth();
+  const excluirConta = useExcluirContaReceber();
 
   if (!permLoading && !temPermissao('CONTAS_RECEBER_VIEW')) return <AcessoNegado />;
   const [searchParams] = useSearchParams();
@@ -100,6 +103,7 @@ export default function ContasReceber() {
             contas={contas}
             canEdit={canEdit}
             onEdit={handleEdit}
+            onExcluir={user?.role === 'SUPER_ADMIN' ? (id) => excluirConta.mutateAsync(id) : undefined}
           />
         )}
       </div>

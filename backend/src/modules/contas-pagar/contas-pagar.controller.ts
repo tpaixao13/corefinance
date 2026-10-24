@@ -3,6 +3,7 @@ import {
   Get,
   Post,
   Put,
+  Delete,
   Param,
   Body,
   Query,
@@ -93,5 +94,16 @@ export class ContasPagarController {
   ) {
     const empresaId = this.resolveEmpresaId(user, empresaIdHeader);
     return this.service.atualizar(id, dto, empresaId, user.id);
+  }
+
+  @Delete(':id')
+  @Roles(Role.SUPER_ADMIN)
+  excluir(
+    @Param('id', ParseUUIDPipe) id: string,
+    @CurrentUser() user: { id: string; role: Role; empresaId: string },
+    @Headers('x-empresa-id') empresaIdHeader: string,
+  ) {
+    const empresaId = this.resolveEmpresaId(user, empresaIdHeader);
+    return this.service.excluir(id, empresaId, user.id);
   }
 }

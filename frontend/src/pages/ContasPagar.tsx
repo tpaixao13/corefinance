@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Receipt, Plus, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
-import { useContasPagar } from '../hooks/useContasPagar';
+import { useContasPagar, useExcluirContaPagar } from '../hooks/useContasPagar';
+import { useAuth } from '../contexts/AuthContext';
 import { usePermissoesCtx } from '../contexts/PermissoesContext';
 import ContasPagarTable from '../components/ContasPagarTable';
 import ContaPagarForm from '../components/ContaPagarForm';
@@ -12,6 +13,8 @@ const LIMIT = 50;
 
 export default function ContasPagar() {
   const { temPermissao, isLoading: permLoading } = usePermissoesCtx();
+  const { user } = useAuth();
+  const excluirConta = useExcluirContaPagar();
 
   if (!permLoading && !temPermissao('CONTAS_PAGAR_VIEW')) return <AcessoNegado />;
   const [searchParams] = useSearchParams();
@@ -100,6 +103,7 @@ export default function ContasPagar() {
             contas={contas}
             canEdit={canEdit}
             onEdit={handleEdit}
+            onExcluir={user?.role === 'SUPER_ADMIN' ? (id) => excluirConta.mutateAsync(id) : undefined}
           />
         )}
       </div>

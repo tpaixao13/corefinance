@@ -28,3 +28,11 @@ export function useAtualizarContaPagar() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ['contas-pagar'] }),
   });
 }
+
+export function useExcluirContaPagar() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => contasPagarApi.excluir(id),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['contas-pagar'] }),
+  });
+}
