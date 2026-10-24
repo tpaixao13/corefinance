@@ -8,4 +8,6 @@ export const despesasApi = {
         params: { page, limit },
       })
       .then((r) => r.data),
+
+  excluir: (id: string) => api.delete(`/extratos/lancamentos/${id}`).then(() => undefined),
 };

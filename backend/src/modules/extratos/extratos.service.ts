@@ -8,7 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
 import * as crypto from 'crypto';
 import { ExtratoImportacao, FormatoExtrato } from './extrato-importacao.entity';
-import { ExtratoLancamento } from './extrato-lancamento.entity';
+import { ExtratoLancamento, StatusConciliacao } from './extrato-lancamento.entity';
 import { ContaBancaria } from '../contas-bancarias/conta-bancaria.entity';
 import { OfxParser } from './parsers/ofx.parser';
 import { CsvParser } from './parsers/csv.parser';
@@ -143,6 +143,66 @@ export class ExtratosService {
       take: limit,
     });
     return { data, total, page, limit };
+  }
+
+  async excluirLancamento(id: string, empresaId: string, usuarioId: string): Promise<void> {
+    const lancamento = await this.lancamentoRepo.findOne({ where: { id, empresaId } });
+    if (!lancamento) throw new NotFoundException('Lançamento não encontrado');
+    if (lancamento.statusConciliacao === StatusConciliacao.CONCILIADO) {
+      throw new BadRequestException('Lançamento conciliado. Estorne a conciliação antes de excluir.');
+    }
+
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      // Remove vínculos com conciliações já estornadas (FK ON DELETE RESTRICT)
+      await queryRunner.manager.query(
+        `DELETE FROM conciliacao WHERE lancamento_extrato_id = $1`,
+        [id],
+      );
+      await queryRunner.manager.delete(ExtratoLancamento, id);
+
+      await queryRunner.manager.query(
+        `UPDATE extrato_importacao SET total_lancamentos = GREATEST(total_lancamentos - 1, 0)
+         WHERE id = $1`,
+        [lancamento.importacaoId],
+      );
+
+      await queryRunner.manager.query(
+        `UPDATE conta_bancaria SET saldo_atual = (
+          SELECT saldo_inicial +
+            COALESCE(SUM(CASE WHEN tipo = 'CREDITO' THEN valor ELSE -valor END), 0)
+          FROM extrato_lancamento WHERE conta_id = $1
+        ) WHERE id = $1`,
+        [lancamento.contaId],
+      );
+
+      await queryRunner.commitTransaction();
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+      throw err;
+    } finally {
+      await queryRunner.release();
+    }
+
+    await this.auditoriaService.registrar({
+      usuarioId,
+      empresaId,
+      acao: AcaoAuditoria.EXCLUSAO_LANCAMENTO,
+      entidade: 'extrato_lancamento',
+      entidadeId: id,
+      dadosAntes: {
+        contaId: lancamento.contaId,
+        importacaoId: lancamento.importacaoId,
+        data: lancamento.data,
+        valor: lancamento.valor,
+        tipo: lancamento.tipo,
+        descricao: lancamento.descricao,
+        statusConciliacao: lancamento.statusConciliacao,
+      },
+    });
   }
 
   private detectarFormato(nomeArquivo: string, mimetype: string): FormatoExtrato {

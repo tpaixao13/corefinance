@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { TrendingDown, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { contasApi } from '../api/contas';
-import { useDespesas } from '../hooks/useDespesas';
+import { useDespesas, useExcluirLancamento } from '../hooks/useDespesas';
 import { useAuth } from '../contexts/AuthContext';
 import DespesasFiltro, { type FiltrosDespesa } from '../components/DespesasFiltro';
 import DespesasTable from '../components/DespesasTable';
@@ -17,7 +17,9 @@ const FILTROS_VAZIOS: Omit<FiltrosDespesa, 'contaId'> = {
 };
 
 export default function Despesas() {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
+  const isSuperAdmin = user?.role === 'SUPER_ADMIN';
+  const excluirLancamento = useExcluirLancamento();
   const [page, setPage] = useState(1);
   const [filtros, setFiltros] = useState<FiltrosDespesa>({
     contaId: '',
@@ -100,6 +102,7 @@ export default function Despesas() {
           <DespesasTable
             despesas={despesas}
             banco={contaAtiva ? `${contaAtiva.banco} — ${contaAtiva.numero}` : ''}
+            onExcluir={isSuperAdmin ? (id) => excluirLancamento.mutateAsync(id) : undefined}
           />
         )}
       </div>

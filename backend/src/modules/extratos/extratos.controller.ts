@@ -2,6 +2,7 @@ import {
   Controller,
   Post,
   Get,
+  Delete,
   Param,
   Query,
   Headers,
@@ -84,5 +85,15 @@ export class ExtratosController {
     @Query('limit', new DefaultValuePipe(50), ParseIntPipe) limit: number,
   ) {
     return this.extratosService.listarLancamentos(this.resolveEmpresaId(user, header), contaId, page, limit);
+  }
+
+  @Delete('lancamentos/:id')
+  @Roles(Role.SUPER_ADMIN)
+  excluirLancamento(
+    @Param('id', ParseUUIDPipe) id: string,
+    @CurrentUser() user: { id: string; role: Role; empresaId: string },
+    @Headers('x-empresa-id') header: string,
+  ) {
+    return this.extratosService.excluirLancamento(id, this.resolveEmpresaId(user, header), user.id);
   }
 }

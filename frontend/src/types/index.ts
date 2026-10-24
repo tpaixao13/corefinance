@@ -261,7 +261,8 @@ export type AcaoAuditoria =
   | 'EDICAO_OS'
   | 'FINALIZACAO_OS'
   | 'CANCELAMENTO_OS'
-  | 'ENVIO_EMAIL_OS';
+  | 'ENVIO_EMAIL_OS'
+  | 'EXCLUSAO_LANCAMENTO';
 
 export interface AuditoriaLog {
   id: string;

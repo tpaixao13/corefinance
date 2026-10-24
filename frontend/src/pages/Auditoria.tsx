@@ -34,6 +34,7 @@ const ACOES: { value: AcaoAuditoria | ''; label: string }[] = [
   { value: 'FINALIZACAO_OS', label: 'Finalização de OS' },
   { value: 'CANCELAMENTO_OS', label: 'Cancelamento de OS' },
   { value: 'ENVIO_EMAIL_OS', label: 'Envio de E-mail OS' },
+  { value: 'EXCLUSAO_LANCAMENTO', label: 'Exclusão de Lançamento' },
 ];
 
 const LIMIT = 50;
