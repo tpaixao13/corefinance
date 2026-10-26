@@ -37,6 +37,7 @@ const ACOES: { value: AcaoAuditoria | ''; label: string }[] = [
   { value: 'EXCLUSAO_LANCAMENTO', label: 'Exclusão de Lançamento' },
   { value: 'EXCLUSAO_CONTA_PAGAR', label: 'Exclusão de Conta a Pagar' },
   { value: 'EXCLUSAO_CONTA_RECEBER', label: 'Exclusão de Conta a Receber' },
+  { value: 'EXCLUSAO_OS', label: 'Exclusão de OS' },
 ];
 
 const LIMIT = 50;

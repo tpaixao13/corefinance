@@ -46,6 +46,14 @@ export function useCancelarOrdemServico() {
   });
 }
 
+export function useExcluirOrdemServico() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => ordensServicoApi.excluir(id),
+    onSuccess: () => qc.invalidateQueries({ queryKey: [KEY] }),
+  });
+}
+
 export function useEnviarEmailOs() {
   return useMutation({
     mutationFn: ({ id, email }: { id: string; email?: string }) =>

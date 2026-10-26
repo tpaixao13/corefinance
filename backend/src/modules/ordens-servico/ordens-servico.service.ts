@@ -189,6 +189,28 @@ export class OrdensServicoService {
     return cancelada;
   }
 
+  // A conta a receber gerada na finalização (se houver) é mantida
+  async excluir(id: string, empresaId: string, operadorId: string): Promise<void> {
+    const os = await this.buscarPorId(id, empresaId);
+    await this.repo.delete(id);
+
+    this.auditoriaService.registrar({
+      usuarioId: operadorId,
+      empresaId,
+      acao: AcaoAuditoria.EXCLUSAO_OS,
+      entidade: 'ordem_servico',
+      entidadeId: id,
+      dadosAntes: {
+        numero: os.numero,
+        cliente: os.cliente,
+        descricao: os.descricao,
+        valor: os.valor,
+        status: os.status,
+        contaReceberId: os.contaReceberId,
+      },
+    }).catch((err) => console.error('[auditoria] EXCLUSAO_OS falhou:', err));
+  }
+
   async enviarEmail(id: string, emailDestino: string | null, empresaId: string, operadorId: string): Promise<{ enviado: boolean; para: string }> {
     const os = await this.buscarPorId(id, empresaId);
     const empresa = await this.empresaRepo.findOne({ where: { id: empresaId } });

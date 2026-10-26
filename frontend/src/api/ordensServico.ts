@@ -25,6 +25,9 @@ export const ordensServicoApi = {
   cancelar: (id: string): Promise<OrdemServico> =>
     api.patch(`/ordens-servico/${id}/cancelar`).then((r) => r.data),
 
+  excluir: (id: string): Promise<void> =>
+    api.delete(`/ordens-servico/${id}`).then(() => undefined),
+
   enviarEmail: (id: string, email?: string): Promise<{ enviado: boolean; para: string }> =>
     api.post(`/ordens-servico/${id}/enviar-email`, { email }).then((r) => r.data),
 };

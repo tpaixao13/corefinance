@@ -31,6 +31,7 @@ const ACAO_LABEL: Record<AcaoAuditoria, string> = {
   EXCLUSAO_LANCAMENTO: 'Exclusão de Lançamento',
   EXCLUSAO_CONTA_PAGAR: 'Exclusão de Conta a Pagar',
   EXCLUSAO_CONTA_RECEBER: 'Exclusão de Conta a Receber',
+  EXCLUSAO_OS: 'Exclusão de OS',
 };
 
 const ACAO_COR: Record<AcaoAuditoria, string> = {
@@ -64,6 +65,7 @@ const ACAO_COR: Record<AcaoAuditoria, string> = {
   EXCLUSAO_LANCAMENTO: 'bg-red-100 text-red-700',
   EXCLUSAO_CONTA_PAGAR: 'bg-red-100 text-red-700',
   EXCLUSAO_CONTA_RECEBER: 'bg-red-100 text-red-700',
+  EXCLUSAO_OS: 'bg-red-100 text-red-700',
 };
 
 function formatarData(iso: string) {

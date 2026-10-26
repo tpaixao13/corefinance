@@ -1,13 +1,15 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ClipboardList, Plus, Pencil, CheckCircle, XCircle, X, CalendarCheck, FileText } from 'lucide-react';
+import { ClipboardList, Plus, Pencil, CheckCircle, XCircle, X, CalendarCheck, FileText, Trash2 } from 'lucide-react';
 import {
   useOrdensServico,
   useCriarOrdemServico,
   useAtualizarOrdemServico,
   useFinalizarOrdemServico,
   useCancelarOrdemServico,
+  useExcluirOrdemServico,
 } from '../hooks/useOrdensServico';
+import { useAuth } from '../contexts/AuthContext';
 import { usePermissoesCtx } from '../contexts/PermissoesContext';
 import OrdemServicoForm from '../components/OrdemServicoForm';
 import type { OrdemServico, StatusOrdemServico } from '../types';
@@ -35,12 +37,14 @@ const fmtData = (d: string | null) =>
 export default function OrdensServico() {
   const navigate = useNavigate();
   const { temPermissao } = usePermissoesCtx();
+  const { user } = useAuth();
 
   const { data, isLoading, isError, error } = useOrdensServico();
   const { mutate: criar, isPending: criando } = useCriarOrdemServico();
   const { mutate: atualizar, isPending: atualizando } = useAtualizarOrdemServico();
   const { mutate: finalizar, isPending: finalizando } = useFinalizarOrdemServico();
   const { mutate: cancelar, isPending: cancelando } = useCancelarOrdemServico();
+  const { mutate: excluir, isPending: excluindo } = useExcluirOrdemServico();
 
   const [showForm, setShowForm] = useState(false);
   const [editando, setEditando] = useState<OrdemServico | null>(null);
@@ -83,7 +87,20 @@ export default function OrdensServico() {
     cancelar(os.id);
   }
 
+  function handleExcluir(os: OrdemServico) {
+    const numero = String(os.numero).padStart(6, '0');
+    if (!confirm(`Excluir definitivamente a OS ${numero} de ${os.cliente}? Esta ação não pode ser desfeita.`)) return;
+    setErrorMsg('');
+    excluir(os.id, {
+      onError: (err: unknown) => {
+        const msg = (err as any).response?.data?.message ?? 'Erro ao excluir';
+        setErrorMsg(msg);
+      },
+    });
+  }
+
   const canCreate = temPermissao('ORDEM_SERVICO_CREATE');
+  const isSuperAdmin = user?.role === 'SUPER_ADMIN';
   const canEdit = temPermissao('ORDEM_SERVICO_EDIT');
   const canFinalizar = temPermissao('ORDEM_SERVICO_FINALIZAR');
 
@@ -197,6 +214,16 @@ export default function OrdensServico() {
                             title="Cancelar OS"
                           >
                             <XCircle size={15} />
+                          </button>
+                        )}
+                        {isSuperAdmin && (
+                          <button
+                            onClick={() => handleExcluir(os)}
+                            disabled={excluindo}
+                            className="text-gray-400 hover:text-red-600 transition-colors"
+                            title="Excluir OS"
+                          >
+                            <Trash2 size={15} />
                           </button>
                         )}
                       </div>

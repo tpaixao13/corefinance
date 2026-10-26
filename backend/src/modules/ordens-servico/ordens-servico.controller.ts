@@ -4,6 +4,7 @@ import {
   Post,
   Put,
   Patch,
+  Delete,
   Param,
   Body,
   Query,
@@ -137,5 +138,15 @@ export class OrdensServicoController {
     @Headers('x-empresa-id') header: string,
   ) {
     return this.service.enviarEmail(id, dto.email ?? null, this.resolveEmpresaId(user, header), user.id);
+  }
+
+  @Delete(':id')
+  @Roles(Role.SUPER_ADMIN)
+  excluir(
+    @Param('id', ParseUUIDPipe) id: string,
+    @CurrentUser() user: { id: string; role: Role; empresaId: string },
+    @Headers('x-empresa-id') header: string,
+  ) {
+    return this.service.excluir(id, this.resolveEmpresaId(user, header), user.id);
   }
 }

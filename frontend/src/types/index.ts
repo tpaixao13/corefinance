@@ -264,7 +264,8 @@ export type AcaoAuditoria =
   | 'ENVIO_EMAIL_OS'
   | 'EXCLUSAO_LANCAMENTO'
   | 'EXCLUSAO_CONTA_PAGAR'
-  | 'EXCLUSAO_CONTA_RECEBER';
+  | 'EXCLUSAO_CONTA_RECEBER'
+  | 'EXCLUSAO_OS';
 
 export interface AuditoriaLog {
   id: string;
